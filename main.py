@@ -16,17 +16,8 @@ run = True
 
 while run:
     clock.tick(60)
-    print(run)
 
-    #try:
     run = game.update()
-    #except Exception as e:
-        # logger.exception('while updating game', e)
-        # logger.log('exiting')
-        #print(str(e))
-        #pygame.quit()
-        #exit(1)
-
     game.draw()
 
 pygame.quit()
