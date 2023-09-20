@@ -69,6 +69,7 @@ class Timer:
         self.started_timestamp = time.time_ns()
         self.running = True
         self.ms = 0
+        self.tmpns = 0
         self.timing_method = 0  # 0 = spacebar, 1 = stackmat
 
         self.ready = 0
@@ -106,8 +107,6 @@ class Timer:
             self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
 
         elif self.timing_method == 1:
-
-            print(f"stackmat state none: {self.stackmat.state is None}")
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
