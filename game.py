@@ -3,7 +3,7 @@ import pygame
 from assets.stackmat import stackmat
 
 
-DEVICE_NUM = 3  # TODO: be able to choose device number in GUI
+DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
 
 
 class Game:
@@ -12,7 +12,6 @@ class Game:
         self.screen = screen
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
-        # self.stackmat = Stackmat(30)
         self.timer = Timer()
 
     def update(self) -> bool:  # returns True if the program should continue updating
@@ -41,7 +40,7 @@ class Game:
         screen = self.screen
         screen.fill((0, 0, 0))
 
-        self.draw_string(self.font1, "Druk op s for stackmat?", (5, 5))
+        self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
 
         c = (255, 255, 255)
         s = repr(self.timer.ms)
@@ -83,10 +82,10 @@ class Timer:
             try:
                 self.stackmat = stackmat.Stackmat(DEVICE_NUM)
             except Exception as e:
-                self.error = f'error initialising Stackmat: {repr(e)}'
+                self.error = f'Error initialising stackmat: {repr(e)}'
 
         else:
-            assert False, f"unknown timing method {self.timing_method}"
+            assert False, f"Unknown timing method {self.timing_method}"
 
     def update(self):
         if not self.running:
@@ -96,15 +95,17 @@ class Timer:
             self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
 
         elif self.timing_method == 1:
+
             if self.stackmat is not None and self.stackmat.state is not None:
                 self.ms = self.stackmat.state.time
+                self.error = None
             else:
                 self.ms = -1
                 if self.error is None:
-                    self.error = 'no data from stackmat'
+                    self.error = 'No data from stackmat!'
 
         else:
-            assert False, f"unknown timing method {self.timing_method}"
+            assert False, f"Unknown timing method {self.timing_method}"
 
     def stop(self):
         self.running = False

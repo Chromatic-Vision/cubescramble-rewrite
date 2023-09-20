@@ -1,6 +1,5 @@
 import sounddevice as sd
-from math import sqrt, ceil
-# from numpy import int8
+from math import sqrt
 
 DEVICE_NUM = 8
 
@@ -56,7 +55,7 @@ class Stackmat:
         self.bitSampleRate = sampleRate / 1200
         self.agcFactor = 0.001 / self.bitSampleRate
         self.stream = sd.InputStream(
-            device=(deviceNum),
+            device=deviceNum,
             samplerate=sampleRate,
             channels=1,
             callback=self.callback
@@ -68,6 +67,8 @@ class Stackmat:
         self.bits = BitStream()
 
         self.state = None
+
+        self.stream.start()
 
     def callback(self, indata, frames, time, status):
         if status:
@@ -114,7 +115,15 @@ class Stackmat:
         return abs(lastSignal - signal) > THRESHOLD_EDGE and self.signalDuration > self.bitSampleRate * 0.6
 
     def processByteBlock(self):
-        self.state = decodeByteblock(self.byteBuffer)
+
+
+        state = decodeByteblock(self.byteBuffer)
+        print("decoding!")
+
+        if state is not None:
+            self.state = state
+            print(state.time)
+
         # if state != None:
         #     print(state.state, state.time, state.resting, state.running)
         self.byteBuffer = []
