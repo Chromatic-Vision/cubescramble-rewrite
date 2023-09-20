@@ -42,7 +42,14 @@ class Game:
 
         self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
 
+
         c = (255, 255, 255)
+
+        if self.timer.ready == 1:
+            c = (255, 0, 0)
+        elif self.timer.ready == 2:
+            c = (0, 255, 0)
+
         s = repr(self.timer.ms)
         if self.timer.error is not None:
             c = (255, 0, 0)
@@ -62,6 +69,9 @@ class Timer:
         self.running = True
         self.ms = 0
         self.timing_method = 0  # 0 = spacebar, 1 = stackmat
+
+        self.ready = 0
+
         self.stackmat = None
         self.error = None
 
@@ -99,6 +109,18 @@ class Timer:
             if self.stackmat is not None and self.stackmat.state is not None:
                 self.ms = self.stackmat.state.time
                 self.error = None
+
+                if self.stackmat.state.state == "S":
+                    self.ready = -1
+                elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
+                    self.ready = 0
+                elif self.stackmat.state.state == "C":
+                    self.ready = 1
+                elif self.stackmat.state.state == "A":
+                    self.ready = 2
+                elif self.stackmat.state.state == " ":
+                    self.ready = 3
+
             else:
                 self.ms = -1
                 if self.error is None:

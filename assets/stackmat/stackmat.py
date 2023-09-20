@@ -118,11 +118,11 @@ class Stackmat:
 
 
         state = decodeByteblock(self.byteBuffer)
-        print("decoding!")
 
         if state is not None:
             self.state = state
             print(state.time)
+            print(state.state, state.time, state.resting, state.running)
 
         # if state != None:
         #     print(state.state, state.time, state.resting, state.running)
