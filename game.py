@@ -22,13 +22,14 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
-                if event.key == pygame.K_r:
-                    self.timer.reset()
+
                 if event.key == pygame.K_SPACE:
-                    self.timer.stop()
+                    if self.timer.running:
+                        self.timer.stop()
+
                 if event.key == pygame.K_s:
                     self.timer.timing_method = 1
-                    self.timer.reset()
+                    self.timer.reset(False)
             elif event.type == pygame.QUIT:
                 return False
 
@@ -41,7 +42,10 @@ class Game:
         screen = self.screen
         screen.fill((0, 0, 0))
 
-        self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
+        if self.timer.ready <= 0 and not self.timer.running:
+            self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
+
+        self.draw_string(self.font1, f"Running: {self.timer.running}", (5, 140))
 
 
         c = (255, 255, 255)
@@ -67,9 +71,8 @@ class Timer:
 
     def __init__(self):
         self.started_timestamp = time.time_ns()
-        self.running = True
+        self.running = False
         self.ms = 0
-        self.tmpns = 0
         self.timing_method = 0  # 0 = spacebar, 1 = stackmat
 
         self.ready = 0
@@ -77,11 +80,12 @@ class Timer:
         self.stackmat = None
         self.error = None
 
-        self.reset()
+        self.reset(False)
 
-    def reset(self):
+    def reset(self, run):
+
         self.started_timestamp = time.time_ns()
-        self.running = True
+        self.running = run
         self.error = None
 
         if self.stackmat is not None:
@@ -100,29 +104,52 @@ class Timer:
             assert False, f"Unknown timing method {self.timing_method}"
 
     def update(self):
-        if not self.running:
-            return
+
+        # if not self.running:
+            # return
 
         if self.timing_method == 0:
-            self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
+
+            if self.running:
+                self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
+
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
+                self.ready += 1
+            else:
+
+                if self.ready >= 60:
+                    self.reset(True)
+                    self.ready = 0
+
+                self.ready = -1
 
         elif self.timing_method == 1:
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
+                print(self.stackmat.state.state)
+
                 self.ms = self.stackmat.state.time
                 self.error = None
 
-                if self.stackmat.state.state == "S":
-                    self.ready = -1
-                elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
-                    self.ready = 0
-                elif self.stackmat.state.state == "C":
-                    self.ready = 1
-                elif self.stackmat.state.state == "A":
-                    self.ready = 2
-                elif self.stackmat.state.state == " ":
-                    self.ready = 3
+                if not self.running:
+
+                    if self.stackmat.state.state == "S":
+                        self.ready = -1
+                    elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
+                        self.ready = 0
+                    elif self.stackmat.state.state == "C":
+                        self.ready = 1
+                    elif self.stackmat.state.state == "A":
+                        self.ready = 2
+                    elif self.stackmat.state.state == " ":
+                        self.ready = 3
+                        self.running = True
+                else:
+
+                    if self.stackmat.state.state == "S":
+                        self.ready = -1
+                        self.running = False
 
             else:
                 self.ms = -1

@@ -49,6 +49,7 @@ class BitStream:
         return byte
 
 class Stackmat:
+
     def __init__(self, deviceNum):
         print(sd.query_devices()[deviceNum])
         sampleRate = 44100
@@ -67,6 +68,8 @@ class Stackmat:
         self.bits = BitStream()
 
         self.state = None
+        self.last = 0
+        self.taken = False
 
         self.stream.start()
 
