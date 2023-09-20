@@ -1,10 +1,11 @@
 import time
 import pygame
+import sounddevice
+
 from assets.stackmat import stackmat
 
-
 DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
-
+print(sounddevice.query_devices())
 
 class Game:
 
@@ -106,7 +107,10 @@ class Timer:
 
         elif self.timing_method == 1:
 
+            print(f"stackmat state none: {self.stackmat.state is None}")
+
             if self.stackmat is not None and self.stackmat.state is not None:
+
                 self.ms = self.stackmat.state.time
                 self.error = None
 

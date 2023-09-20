@@ -1,7 +1,7 @@
 import sounddevice as sd
 from math import sqrt
 
-DEVICE_NUM = 8
+DEVICE_NUM = 30
 
 THRESHOLD_EDGE = 0.7
 AGC_FACTOR = 0.0001
@@ -71,6 +71,9 @@ class Stackmat:
         self.stream.start()
 
     def callback(self, indata, frames, time, status):
+
+        print("callback22")
+
         if status:
             print(status)
         self.process(indata)
@@ -116,6 +119,7 @@ class Stackmat:
 
     def processByteBlock(self):
 
+        print("Processing...")
 
         state = decodeByteblock(self.byteBuffer)
 
@@ -160,3 +164,4 @@ def decodeByteblock(byteBuffer):
 
 if __name__ == '__main__':
     Stackmat(DEVICE_NUM)
+# Stackmat(DEVICE_NUM)
