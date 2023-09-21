@@ -1,11 +1,10 @@
 import time
 import pygame
-import sounddevice
-
 from assets.stackmat import stackmat
 
-DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
-print(sounddevice.query_devices())
+
+DEVICE_NUM = 5  # TODO: be able to choose device number in GUI
+
 
 class Game:
 
@@ -29,6 +28,7 @@ class Game:
                         self.timer.stop()
                     else:
                         self.timer.started_timestamp_spacebar = time.time_ns()
+                        self.timer.ready = 1
 
                 if event.key == pygame.K_s:
 
@@ -41,6 +41,14 @@ class Game:
 
             elif event.type == pygame.QUIT:
                 return False
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    if self.timer.ready == 1:
+                        self.timer.ready = 0
+                    elif self.timer.ready == 2:
+                        self.timer.ready = 3
+                        self.timer.running = True
 
         self.timer.update()
 
@@ -56,9 +64,7 @@ class Game:
 
         self.draw_string(self.font1, f"Running: {self.timer.running}", (5, 140))
 
-
         c = (255, 255, 255)
-
         if self.timer.ready == 1:
             c = (255, 0, 0)
         elif self.timer.ready == 2:
@@ -121,9 +127,9 @@ class Timer:
         if self.timing_method == 0:
 
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 55:
-                    self.ready = 3 #??????
-
+                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 500 and self.started_timestamp_spacebar != 0:
+                    self.ready = 2
+                    self.started_timestamp = time.time_ns()
 
             if self.running:
                 self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
@@ -166,3 +172,5 @@ class Timer:
 
     def stop(self):
         self.running = False
+        self.ready = 0
+        self.started_timestamp_spacebar = 0
