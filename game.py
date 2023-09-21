@@ -24,12 +24,21 @@ class Game:
                     return False
 
                 if event.key == pygame.K_SPACE:
+
                     if self.timer.running:
                         self.timer.stop()
+                    else:
+                        self.timer.started_timestamp_spacebar = time.time_ns()
 
                 if event.key == pygame.K_s:
-                    self.timer.timing_method = 1
+
+                    if self.timer.timing_method < 1:
+                        self.timer.timing_method += 1
+                    else:
+                        self.timer.timing_method = 0
+
                     self.timer.reset(False)
+
             elif event.type == pygame.QUIT:
                 return False
 
@@ -76,6 +85,7 @@ class Timer:
         self.timing_method = 0  # 0 = spacebar, 1 = stackmat
 
         self.ready = 0
+        self.started_timestamp_spacebar = time.time_ns()
 
         self.stackmat = None
         self.error = None
@@ -110,18 +120,13 @@ class Timer:
 
         if self.timing_method == 0:
 
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
+                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 55:
+                    self.ready = 3 #??????
+
+
             if self.running:
                 self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
-
-            if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.ready += 1
-            else:
-
-                if self.ready >= 60:
-                    self.reset(True)
-                    self.ready = 0
-
-                self.ready = -1
 
         elif self.timing_method == 1:
 
