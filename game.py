@@ -117,6 +117,13 @@ def time_str(time: Union[int, str], long: bool = False) -> str:
 
     out += f'{int(seconds)}'
     if long:
-        out += f'.{int(time % 1000)}'
+        out += '.'
+        millis = int(time % 1000)
+        if millis < 100:
+            out += '0'
+        if millis < 10:
+            out += '0'
+
+        out += f'{millis}'
 
     return out
