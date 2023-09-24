@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from typing import Tuple
 
 CONFIG_FILE = 'config.json'
 
@@ -12,18 +13,51 @@ class Config:
         with open('config.json', 'r') as file:
             raw = json.load(file)
         for i in raw:
-            exec(f'self.{i} = {raw[i]}')
+            item = self._load(raw[i], self.__annotations__[i])
+            exec(f'self.{i} = item')
+
+    def _load(self, raw, t):
+        print(raw, type(raw))
+        if type(raw) == int:
+            return int(raw)
+        elif type(raw) == str:
+            return str(raw)
+        elif type(raw) == list:
+            out = []
+            for item in raw:
+                out.append(self._load(item, None))
+        # TODO: tuples
+
+        out = t()
+        out.load(raw)
+        return out
+        # exec(f'self.{i} = {t}().load({raw[i]})')
 
     def save(self):
         out = {}
         for i in self.__annotations__:
-            out[i] = eval('self.' + i)
+            out[i] = self._save(eval(f'self.{i}'))
         with open(CONFIG_FILE, 'w') as file:
             json.dump(out, file)
+
+    def _save(self, raw):
+        if type(raw) == int:
+            return raw
+        elif type(raw) == str:
+            return raw
+        elif type(raw) == list:
+            out = []
+            for item in raw:
+                out.append(self._save(item))
+            return out
+
+        return raw.save()
 
 
 if __name__ == '__main__':
     print(Config.__annotations__)
     c = Config(69)
     c.save()
-    print(c.load())
+    c.device_num = 0
+    c.load()
+    print(c.device_num)
