@@ -57,6 +57,7 @@ class Timer:
                     else:
                         self.started_timestamp_spacebar = time.time_ns()
                         self.ready = 1
+                        self.ms = 0
 
                 if event.key == pygame.K_s:
 

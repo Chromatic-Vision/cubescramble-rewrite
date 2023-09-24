@@ -1,3 +1,4 @@
+from typing import Union
 import pygame
 
 import calcutils
@@ -42,14 +43,18 @@ class Game:
         """
 
         # ao5
-        self.draw_string(self.font1,
-                         f"ao5: {calcutils.get_average_of(self.timer.time_history, 5) if calcutils.get_average_of(self.timer.time_history, 5) != -1 else '-'}",
-                         (5, screen.get_size()[1] - 65))
+        ao5 = calcutils.get_average_of(self.timer.time_history, 5)
+        if ao5 == -1:
+            ao5 = '-'
+        ao5 = time_str(ao5, True)
+        self.draw_string(self.font1, f"ao5: {ao5}", (5, screen.get_size()[1] - 65))
 
         # ao12
-        self.draw_string(self.font1,
-                         f"ao12: {calcutils.get_average_of(self.timer.time_history, 12) if calcutils.get_average_of(self.timer.time_history, 12) != -1 else '-'}",
-                         (5, screen.get_size()[1] - 40))
+        ao12 = calcutils.get_average_of(self.timer.time_history, 12)
+        if ao12 == -1:
+            ao12 = '-'
+        ao12 = time_str(ao12, True)
+        self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
 
         """
         
@@ -60,15 +65,16 @@ class Game:
         if self.timer.ready <= 0 and not self.timer.running:
             self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
 
-        self.draw_string(self.font1, f"Running: {self.timer.running}", (5, 140))
-
         c = (255, 255, 255)
+        long = not self.timer.running
         if self.timer.ready == 1:
             c = (255, 0, 0)
+            long = False
         elif self.timer.ready == 2:
             c = (0, 255, 0)
+            long = False
 
-        s = repr(self.timer.ms)
+        s = time_str(int(self.timer.ms), long)
         if self.timer.error is not None:
             c = (255, 0, 0)
             s = self.timer.error
@@ -78,3 +84,21 @@ class Game:
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255)):
         self.screen.blit(font.render(text, True, color), coords)
+
+
+def time_str(time: Union[int, str], long: bool = False) -> str:
+    if type(time) == str:
+        return time
+
+    seconds = time // 1000 % 60
+    out = ''
+    if time // 60000 > 0:
+        out += f'{int(time // 60000)}:'
+        if seconds < 10:
+            out += '0'
+
+    out += f'{int(seconds)}'
+    if long:
+        out += f'.{int(time % 1000)}'
+
+    return out
