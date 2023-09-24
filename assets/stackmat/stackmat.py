@@ -121,15 +121,15 @@ class Stackmat:
     def processByteBlock(self):
 
         if self.state is not None:
-            lasttime = self.state.time
+            last_time = self.state.time
         else:
-            lasttime = 0
+            last_time = 0
 
         state = decodeByteblock(self.byteBuffer)
 
         if state is not None:
 
-            state.frozen = state.time == lasttime and state.time != 0 and lasttime != 0
+            state.frozen = state.time == last_time and state.time != 0 and last_time != 0
 
             self.state = state
 

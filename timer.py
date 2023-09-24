@@ -18,6 +18,8 @@ class Timer:
         self.stackmat = None
         self.error = None
 
+        self.time_history = []
+
         self.reset(False)
 
     def reset(self, run):
@@ -51,6 +53,7 @@ class Timer:
 
                     if self.running:
                         self.stop()
+
                     else:
                         self.started_timestamp_spacebar = time.time_ns()
                         self.ready = 1
@@ -82,7 +85,7 @@ class Timer:
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
-                print(self.stackmat.state.state)
+                # print(self.stackmat.state.state)
 
                 self.ms = self.stackmat.state.time
                 self.error = None
@@ -113,6 +116,8 @@ class Timer:
                         self.ready = -1
                         self.running = False
 
+                        self.time_history.append(self.stackmat.state.time)
+
             else:
                 self.ms = -1
                 if self.error is None:
@@ -125,3 +130,4 @@ class Timer:
         self.running = False
         self.ready = 0
         self.started_timestamp_spacebar = 0
+        self.time_history.append(self.ms)

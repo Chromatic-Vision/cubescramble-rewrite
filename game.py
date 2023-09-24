@@ -1,4 +1,6 @@
 import pygame
+
+import calcutils
 import timer
 
 
@@ -31,6 +33,29 @@ class Game:
 
         screen = self.screen
         screen.fill((0, 0, 0))
+
+        """
+        
+        Code below is used to render the overall items on the screen.  
+        Adjust and modify the code however you want.
+        
+        """
+
+        # ao5
+        self.draw_string(self.font1,
+                         f"ao5: {calcutils.get_average_of(self.timer.time_history, 5) if calcutils.get_average_of(self.timer.time_history, 5) != -1 else '-'}",
+                         (5, screen.get_size()[1] - 65))
+
+        # ao12
+        self.draw_string(self.font1,
+                         f"ao12: {calcutils.get_average_of(self.timer.time_history, 12) if calcutils.get_average_of(self.timer.time_history, 12) != -1 else '-'}",
+                         (5, screen.get_size()[1] - 40))
+
+        """
+        
+        End
+        
+        """
 
         if self.timer.ready <= 0 and not self.timer.running:
             self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
