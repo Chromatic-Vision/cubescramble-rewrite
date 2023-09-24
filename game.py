@@ -1,9 +1,5 @@
-import time
 import pygame
-from assets.stackmat import stackmat
-
-
-DEVICE_NUM = 5  # TODO: be able to choose device number in GUI
+import timer
 
 
 class Game:
@@ -12,45 +8,22 @@ class Game:
         self.screen = screen
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
-        self.timer = Timer()
+        self.timer = timer.Timer()
 
     def update(self) -> bool:  # returns True if the program should continue updating
 
-        for event in pygame.event.get():
+        events = pygame.event.get()
+
+        for event in events:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
 
-                if event.key == pygame.K_SPACE:
-
-                    if self.timer.running:
-                        self.timer.stop()
-                    else:
-                        self.timer.started_timestamp_spacebar = time.time_ns()
-                        self.timer.ready = 1
-
-                if event.key == pygame.K_s:
-
-                    if self.timer.timing_method < 1:
-                        self.timer.timing_method += 1
-                    else:
-                        self.timer.timing_method = 0
-
-                    self.timer.reset(False)
-
             elif event.type == pygame.QUIT:
                 return False
 
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    if self.timer.ready == 1:
-                        self.timer.ready = 0
-                    elif self.timer.ready == 2:
-                        self.timer.ready = 3
-                        self.timer.running = True
-
-        self.timer.update()
+        self.timer.update(events)
 
         return True
 
@@ -80,97 +53,3 @@ class Game:
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255)):
         self.screen.blit(font.render(text, True, color), coords)
-
-
-class Timer:
-
-    def __init__(self):
-        self.started_timestamp = time.time_ns()
-        self.running = False
-        self.ms = 0
-        self.timing_method = 0  # 0 = spacebar, 1 = stackmat
-
-        self.ready = 0
-        self.started_timestamp_spacebar = time.time_ns()
-
-        self.stackmat = None
-        self.error = None
-
-        self.reset(False)
-
-    def reset(self, run):
-
-        self.started_timestamp = time.time_ns()
-        self.running = run
-        self.error = None
-
-        if self.stackmat is not None:
-            self.stackmat.close()
-
-        if self.timing_method == 0:
-            self.stackmat = None
-
-        elif self.timing_method == 1:
-            try:
-                self.stackmat = stackmat.Stackmat(DEVICE_NUM)
-            except Exception as e:
-                self.error = f'Error initialising stackmat: {repr(e)}'
-
-        else:
-            assert False, f"Unknown timing method {self.timing_method}"
-
-    def update(self):
-
-        # if not self.running:
-            # return
-
-        if self.timing_method == 0:
-
-            if pygame.key.get_pressed()[pygame.K_SPACE]:
-                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 500 and self.started_timestamp_spacebar != 0:
-                    self.ready = 2
-                    self.started_timestamp = time.time_ns()
-
-            if self.running:
-                self.ms = round((time.time_ns() - self.started_timestamp) / 1e6)
-
-        elif self.timing_method == 1:
-
-            if self.stackmat is not None and self.stackmat.state is not None:
-
-                print(self.stackmat.state.state)
-
-                self.ms = self.stackmat.state.time
-                self.error = None
-
-                if not self.running:
-
-                    if self.stackmat.state.state == "S":
-                        self.ready = -1
-                    elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
-                        self.ready = 0
-                    elif self.stackmat.state.state == "C":
-                        self.ready = 1
-                    elif self.stackmat.state.state == "A":
-                        self.ready = 2
-                    elif self.stackmat.state.state == " ":
-                        self.ready = 3
-                        self.running = True
-                else:
-
-                    if self.stackmat.state.state == "S":
-                        self.ready = -1
-                        self.running = False
-
-            else:
-                self.ms = -1
-                if self.error is None:
-                    self.error = 'No data from stackmat!'
-
-        else:
-            assert False, f"Unknown timing method {self.timing_method}"
-
-    def stop(self):
-        self.running = False
-        self.ready = 0
-        self.started_timestamp_spacebar = 0
