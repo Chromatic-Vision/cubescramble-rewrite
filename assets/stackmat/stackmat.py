@@ -120,9 +120,17 @@ class Stackmat:
 
     def processByteBlock(self):
 
+        if self.state is not None:
+            lasttime = self.state.time
+        else:
+            lasttime = 0
+
         state = decodeByteblock(self.byteBuffer)
 
         if state is not None:
+
+            state.frozen = state.time == lasttime and state.time != 0 and lasttime != 0
+
             self.state = state
 
         # if state != None:
@@ -135,6 +143,7 @@ class StackmatState:
         self.time = time
         self.resting = state == 'I'
         self.running = state == ' '
+        self.frozen = False
 
 def decodeByteblock(byteBuffer):
     try:

@@ -92,7 +92,13 @@ class Timer:
                     if self.stackmat.state.state == "S":
                         self.ready = -1
                     elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
-                        self.ready = 0
+
+                        if self.ready < 2:
+                            self.ready = 0
+                        else:
+                            self.ready = 3
+                            self.running = True
+
                     elif self.stackmat.state.state == "C":
                         self.ready = 1
                     elif self.stackmat.state.state == "A":
@@ -102,7 +108,8 @@ class Timer:
                         self.running = True
                 else:
 
-                    if self.stackmat.state.state == "S":
+                    if self.stackmat.state.frozen or self.stackmat.state.state == "S": # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
+                        print("freeze detected!")
                         self.ready = -1
                         self.running = False
 
