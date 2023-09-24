@@ -18,4 +18,5 @@ while run:
     run = game.update()
     game.draw()
 
+game.save()
 pygame.quit()

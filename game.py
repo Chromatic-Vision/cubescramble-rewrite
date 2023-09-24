@@ -2,6 +2,7 @@ from typing import Union
 import pygame
 
 import calcutils
+import config
 import timer
 
 
@@ -12,6 +13,9 @@ class Game:
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.timer = timer.Timer()
+
+        self.config = config.Config(0)
+        self.load()
 
     def update(self) -> bool:  # returns True if the program should continue updating
 
@@ -84,6 +88,20 @@ class Game:
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255)):
         self.screen.blit(font.render(text, True, color), coords)
+
+    def save(self):
+        self.config.times = self.timer.time_history
+        self.config.device_num = timer.DEVICE_NUM
+
+        self.config.save()
+
+    def load(self):
+        try:
+            self.config.load()
+        except FileNotFoundError:
+            pass
+        self.timer.time_history = self.config.times
+        timer.DEVICE_NUM = self.config.device_num
 
 
 def time_str(time: Union[int, str], long: bool = False) -> str:

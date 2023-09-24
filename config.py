@@ -1,6 +1,6 @@
 import json
-from dataclasses import dataclass
-from typing import Tuple
+from dataclasses import dataclass, field
+from typing import List
 
 CONFIG_FILE = 'config.json'
 
@@ -8,6 +8,7 @@ CONFIG_FILE = 'config.json'
 @dataclass
 class Config:
     device_num: int
+    times: List[int] = field(default_factory=list)
 
     def load(self):
         with open('config.json', 'r') as file:
@@ -17,7 +18,6 @@ class Config:
             exec(f'self.{i} = item')
 
     def _load(self, raw, t):
-        print(raw, type(raw))
         if type(raw) == int:
             return int(raw)
         elif type(raw) == str:
@@ -26,6 +26,7 @@ class Config:
             out = []
             for item in raw:
                 out.append(self._load(item, None))
+            return out
         # TODO: tuples
 
         out = t()
