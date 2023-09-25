@@ -1,3 +1,4 @@
+import colorsys
 from typing import Union
 import pygame
 import calcutils
@@ -14,13 +15,16 @@ class Game:
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
         self.timer = timer.Timer()
+
+        self.config = config.Config(0)
+        self.load()
+
         self.particles = []
 
         for i in range(80):
             self.particles.append(particle.Particle(screen.get_size()))
 
-        self.config = config.Config(0)
-        self.load()
+        self.background_hue = 0
 
     def update(self) -> bool:  # returns True if the program should continue updating
 
@@ -41,8 +45,11 @@ class Game:
 
     def draw(self):
 
+        self.background_hue += 1
+
         screen = self.screen
-        screen.fill((0, 0, 0))
+        #screen.fill((0, 0, 0))
+        screen.fill(tuple(int(max(0, min(val * 255, 255))) for val in colorsys.hsv_to_rgb(((self.background_hue / 5.5) % 360) / 360, 255 / 100.0, 79 / 100.0)))
 
         for p in self.particles:
             p.move()
