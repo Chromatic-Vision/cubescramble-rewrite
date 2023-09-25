@@ -1,6 +1,5 @@
 from typing import Union
 import pygame
-
 import calcutils
 import config
 import timer
@@ -47,28 +46,35 @@ class Game:
         
         """
 
-        # ao5
-        ao5 = calcutils.get_average_of(self.timer.time_history, 5)
-        if ao5 == -1:
-            ao5 = '-'
-        ao5 = time_str(ao5, True)
-        self.draw_string(self.font1, f"ao5: {ao5}", (5, screen.get_size()[1] - 65))
+        """
+        
+        Elements that only will shown if timer is inactive.
+        
+        """
 
-        # ao12
-        ao12 = calcutils.get_average_of(self.timer.time_history, 12)
-        if ao12 == -1:
-            ao12 = '-'
-        ao12 = time_str(ao12, True)
-        self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
+        if self.timer.ready <= 0 and not self.timer.running:
+
+            # ao5
+            ao5 = calcutils.get_average_of(self.timer.time_history, 5)
+            if ao5 == -1:
+                ao5 = '-'
+            ao5 = time_str(ao5, True)
+            self.draw_string(self.font1, f"ao5: {ao5}", (5, screen.get_size()[1] - 65))
+
+            # ao12
+            ao12 = calcutils.get_average_of(self.timer.time_history, 12)
+            if ao12 == -1:
+                ao12 = '-'
+            ao12 = time_str(ao12, True)
+            self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
+
+
 
         """
         
         End
         
         """
-
-        if self.timer.ready <= 0 and not self.timer.running:
-            self.draw_string(self.font1, "Press on s for stackmat?", (5, 5))
 
         c = (255, 255, 255)
         long = not self.timer.running
@@ -83,6 +89,8 @@ class Game:
         if self.timer.error is not None:
             c = (255, 0, 0)
             s = self.timer.error
+
+        # time
         self.draw_string(self.font2, s, (self.screen.get_size()[0] / 2 - self.font2.size(s)[0] / 2 - 5, self.screen.get_size()[1] / 2 - self.font2.size(s)[1] / 2), color=c)
 
         pygame.display.update()

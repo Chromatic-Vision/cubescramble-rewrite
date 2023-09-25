@@ -1,8 +1,12 @@
 import pygame
 import time
+
+import sounddevice
+
 from assets.stackmat import stackmat
 
-DEVICE_NUM = 30 # TODO: be able to choose device number in GUI
+DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
+
 
 class Timer:
 
@@ -21,6 +25,7 @@ class Timer:
         self.time_history = []
 
         self.reset(False)
+        print(sounddevice.query_devices())
 
     def reset(self, run):
 
@@ -60,7 +65,6 @@ class Timer:
                         self.ms = 0
 
                 if event.key == pygame.K_s:
-
                     self.timing_method = 0 if self.timing_method == 1 else 1
                     self.reset(False)
 
@@ -75,7 +79,8 @@ class Timer:
         if self.timing_method == 0:
 
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 550 and self.started_timestamp_spacebar != 0:
+                if round(
+                        time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 550 and self.started_timestamp_spacebar != 0:
                     self.ready = 2
                     self.started_timestamp = time.time_ns()
 
@@ -86,7 +91,7 @@ class Timer:
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
-                # print(self.stackmat.state.state)
+                print(self.stackmat.state.state)
 
                 self.ms = self.stackmat.state.time
                 self.error = None
@@ -97,22 +102,29 @@ class Timer:
                         self.ready = -1
                     elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
 
-                        if self.ready < 2:
-                            self.ready = 0
-                        else:
-                            self.ready = 3
-                            self.running = True
+                        if self.stackmat.state.time <= 0:
+                            if self.ready < 2:
+                                self.ready = 0
+                            else:
+                                self.ready = 3
+                                self.running = True
 
                     elif self.stackmat.state.state == "C":
-                        self.ready = 1
+
+                        if self.stackmat.state.time <= 0:
+                            self.ready = 1
+
                     elif self.stackmat.state.state == "A":
-                        self.ready = 2
+
+                        if self.stackmat.state.time <= 0:
+                            self.ready = 2
+
                     elif self.stackmat.state.state == " ":
                         self.ready = 3
                         self.running = True
                 else:
 
-                    if self.stackmat.state.frozen or self.stackmat.state.state == "S": # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
+                    if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
                         print("freeze detected!")
                         self.ready = -1
                         self.running = False
