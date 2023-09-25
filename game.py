@@ -10,7 +10,8 @@ from assets.render import particle
 class Game:
 
     def __init__(self, screen: pygame.Surface):
-        self.screen = screen
+
+        self.screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE) # weird, windows
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
