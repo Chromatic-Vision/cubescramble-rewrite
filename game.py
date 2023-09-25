@@ -12,6 +12,7 @@ class Game:
         self.screen = screen
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
+        self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
         self.timer = timer.Timer()
 
         self.config = config.Config(0)
@@ -82,7 +83,7 @@ class Game:
         if self.timer.error is not None:
             c = (255, 0, 0)
             s = self.timer.error
-        self.draw_string(self.font1, s, (5, 40), color=c)
+        self.draw_string(self.font2, s, (self.screen.get_size()[0] / 2 - self.font2.size(s)[0] / 2 - 5, self.screen.get_size()[1] / 2 - self.font2.size(s)[1] / 2), color=c)
 
         pygame.display.update()
 
