@@ -3,6 +3,7 @@ import pygame
 import calcutils
 import config
 import timer
+from assets.render import particle
 
 
 class Game:
@@ -13,6 +14,10 @@ class Game:
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
         self.timer = timer.Timer()
+        self.particles = []
+
+        for i in range(80):
+            self.particles.append(particle.Particle(screen.get_size()))
 
         self.config = config.Config(0)
         self.load()
@@ -39,6 +44,16 @@ class Game:
         screen = self.screen
         screen.fill((0, 0, 0))
 
+        for p in self.particles:
+            p.move()
+            p.render(screen)
+
+        for i in range(len(self.particles)):
+            for j in range(i + 1, len(self.particles)):
+                if self.particles[i].distance_to(self.particles[j]) < 100:
+                    pygame.draw.line(screen, (255, 255, 255), (self.particles[i].x, self.particles[i].y),
+                                     (self.particles[j].x, self.particles[j].y), 1)
+
         """
         
         Code below is used to render the overall items on the screen.  
@@ -48,7 +63,7 @@ class Game:
 
         """
         
-        Elements that only will shown if timer is inactive.
+        Elements that only will be displayed if timer is inactive.
         
         """
 
@@ -68,14 +83,13 @@ class Game:
             ao12 = time_str(ao12, True)
             self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
 
-
-
         """
         
-        End
+        Elements that will be displayed all the time.
         
         """
 
+        # time
         c = (255, 255, 255)
         long = not self.timer.running
         if self.timer.ready == 1:
@@ -90,8 +104,14 @@ class Game:
             c = (255, 0, 0)
             s = self.timer.error
 
-        # time
-        self.draw_string(self.font2, s, (self.screen.get_size()[0] / 2 - self.font2.size(s)[0] / 2 - 5, self.screen.get_size()[1] / 2 - self.font2.size(s)[1] / 2), color=c)
+        self.draw_string(self.font2, s, (self.screen.get_size()[0] / 2 - self.font2.size(s)[0] / 2 - 5,
+                                         self.screen.get_size()[1] / 2 - self.font2.size(s)[1] / 2), color=c)
+
+        """
+        
+        End
+        
+        """
 
         pygame.display.update()
 

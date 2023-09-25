@@ -79,8 +79,7 @@ class Timer:
         if self.timing_method == 0:
 
             if pygame.key.get_pressed()[pygame.K_SPACE]:
-                if round(
-                        time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 550 and self.started_timestamp_spacebar != 0:
+                if round(time.time_ns() - self.started_timestamp_spacebar) / 1e6 > 550 and self.started_timestamp_spacebar != 0:
                     self.ready = 2
                     self.started_timestamp = time.time_ns()
 
@@ -126,10 +125,7 @@ class Timer:
 
                     if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
                         print("freeze detected!")
-                        self.ready = -1
-                        self.running = False
-
-                        self.time_history.append(self.stackmat.state.time)
+                        self.stop()
 
             else:
                 self.ms = -1
@@ -141,6 +137,6 @@ class Timer:
 
     def stop(self):
         self.running = False
-        self.ready = 0
+        self.ready = -1
         self.started_timestamp_spacebar = 0
         self.time_history.append(self.ms)
