@@ -48,8 +48,8 @@ class Game:
         self.background_hue += 1
 
         screen = self.screen
-        #screen.fill((0, 0, 0))
-        screen.fill(tuple(int(max(0, min(val * 255, 255))) for val in colorsys.hsv_to_rgb(((self.background_hue / 5.5) % 360) / 360, 255 / 100.0, 79 / 100.0)))
+        screen.fill((0, 0, 0))
+        #screen.fill(tuple(int(max(0, min(val * 255, 255))) for val in colorsys.hsv_to_rgb(((self.background_hue / 5.5) % 360) / 360, 255 / 100.0, 79 / 100.0)))
 
         for p in self.particles:
             p.move()
@@ -58,7 +58,7 @@ class Game:
         for i in range(len(self.particles)):
             for j in range(i + 1, len(self.particles)):
                 if self.particles[i].distance_to(self.particles[j]) < 100:
-                    pygame.draw.line(screen, (255, 255, 255), (self.particles[i].x, self.particles[i].y),
+                    pygame.draw.line(screen, self.particles[i].color, (self.particles[i].x, self.particles[i].y),
                                      (self.particles[j].x, self.particles[j].y), 1)
 
         """
