@@ -7,7 +7,6 @@ clock = pygame.time.Clock()
 
 size = (0, 0)
 screen = pygame.display.set_mode(size, pygame.RESIZABLE)
-size = screen.get_size()
 
 game = game.Game(screen)
 run = True

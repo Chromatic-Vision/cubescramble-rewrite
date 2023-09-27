@@ -3,6 +3,7 @@ import time
 
 import sounddevice
 
+from assets.scrambler import clock
 from assets.stackmat import stackmat
 
 DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
@@ -23,6 +24,8 @@ class Timer:
         self.error = None
 
         self.time_history = []
+
+        self.current_scramble = clock.get_scramble()
 
         self.reset(False)
         print(sounddevice.query_devices())
@@ -139,4 +142,6 @@ class Timer:
         self.running = False
         self.ready = -1
         self.started_timestamp_spacebar = 0
+
+        self.current_scramble = clock.get_scramble()
         self.time_history.append(self.ms)

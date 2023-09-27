@@ -22,7 +22,7 @@ class Game:
 
         self.particles = []
 
-        for i in range(80):
+        for i in range(70):
             self.particles.append(particle.Particle(screen.get_size()))
 
         self.background_hue = 0
@@ -76,6 +76,9 @@ class Game:
         """
 
         if self.timer.ready <= 0 and not self.timer.running:
+
+            # current scramble
+            self.draw_string(self.font1, self.timer.current_scramble, (self.screen.get_size()[0] / 2 - self.font1.size(self.timer.current_scramble)[0] / 2 - 5, 20))
 
             # ao5
             ao5 = calcutils.get_average_of(self.timer.time_history, 5)
