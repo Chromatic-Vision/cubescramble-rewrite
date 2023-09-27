@@ -3,6 +3,8 @@ import time
 
 import sounddevice
 
+import assets.render.particle
+from assets.render.particle import ParticleRenderer
 from assets.scrambler import clock
 from assets.stackmat import stackmat
 
@@ -11,7 +13,7 @@ DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
 
 class Timer:
 
-    def __init__(self):
+    def __init__(self, particlerenderer: assets.render.particle.ParticleRenderer):
         self.started_timestamp = time.time_ns()
         self.running = False
         self.ms = 0
@@ -26,6 +28,7 @@ class Timer:
         self.time_history = []
 
         self.current_scramble = clock.get_scramble()
+        self.particlerenderer = particlerenderer
 
         self.reset(False)
         print(sounddevice.query_devices())
@@ -124,6 +127,8 @@ class Timer:
                     elif self.stackmat.state.state == " ":
                         self.ready = 3
                         self.running = True
+
+                        self.particlerenderer.clear()
                 else:
 
                     if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
@@ -144,4 +149,7 @@ class Timer:
         self.started_timestamp_spacebar = 0
 
         self.current_scramble = clock.get_scramble()
+
+        self.particlerenderer.refresh(70)
+
         self.time_history.append(self.ms)

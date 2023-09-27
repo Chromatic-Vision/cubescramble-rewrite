@@ -4,7 +4,7 @@ import pygame
 import calcutils
 import config
 import timer
-from assets.render import particle
+from assets.render.particle import ParticleRenderer
 
 
 class Game:
@@ -15,15 +15,13 @@ class Game:
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
-        self.timer = timer.Timer()
+
+        self.particlerenderer = ParticleRenderer(self.screen)
+
+        self.timer = timer.Timer(self.particlerenderer) # TODO: move those
 
         self.config = config.Config(0)
         self.load()
-
-        self.particles = []
-
-        for i in range(70):
-            self.particles.append(particle.Particle(screen.get_size()))
 
         self.background_hue = 0
 
@@ -52,22 +50,15 @@ class Game:
         screen.fill((0, 0, 0))
         #screen.fill(tuple(int(max(0, min(val * 255, 255))) for val in colorsys.hsv_to_rgb(((self.background_hue / 5.5) % 360) / 360, 255 / 100.0, 79 / 100.0)))
 
-        for p in self.particles:
-            p.move()
-            p.render(screen)
-
-        for i in range(len(self.particles)):
-            for j in range(i + 1, len(self.particles)):
-                if self.particles[i].distance_to(self.particles[j]) < 100:
-                    pygame.draw.line(screen, self.particles[i].color, (self.particles[i].x, self.particles[i].y),
-                                     (self.particles[j].x, self.particles[j].y), 1)
-
         """
         
         Code below is used to render the overall items on the screen.  
         Adjust and modify the code however you want.
         
         """
+
+        # particles
+        self.particlerenderer.update()
 
         """
         
