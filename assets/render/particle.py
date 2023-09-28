@@ -2,6 +2,7 @@ import math
 import random
 import pygame
 
+
 class ParticleRenderer:
 
     def __init__(self, screen: pygame.surface.Surface):
@@ -12,11 +13,14 @@ class ParticleRenderer:
         for i in range(len(self.particles)):
             for j in range(i + 1, len(self.particles)):
                 if self.particles[i].distance_to(self.particles[j]) < 100:
+                    print(self.particles[i].color)
                     pygame.draw.line(self.screen, self.particles[i].color, (self.particles[i].x, self.particles[i].y),
                                      (self.particles[j].x, self.particles[j].y), 1)
 
     def clear(self):
-        self.particles = []
+        for p in self.particles:
+            p.fadeout = True
+        # self.particles = []
 
     def refresh(self, particle_amount):
         self.clear()
@@ -26,6 +30,18 @@ class ParticleRenderer:
 
     def update(self):
         for p in self.particles:
+            if p.fadeout:
+                p.color = (
+                    p.color[0] - 10,
+                    p.color[1] - 10,
+                    p.color[2] - 10
+                )
+                if p.color[0] <= 0 \
+                        or p.color[1] <= 0 \
+                        or p.color[2] <= 0:
+                    self.particles.remove(p)
+                    continue
+
             p.move()
             p.render(self.screen)
 
@@ -52,6 +68,7 @@ class ParticleRenderer:
             self.vy = random.uniform(-2.5, 2.5)
             # self.color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.color = (255, 255, 255)
+            self.fadeout = False
 
         def render(self, screen: pygame.surface.Surface):
             pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)

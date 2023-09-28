@@ -1,6 +1,8 @@
 import sounddevice as sd
 from math import sqrt
 
+# https://github.com/coder13/stackmat-python
+
 DEVICE_NUM = 8
 
 THRESHOLD_EDGE = 0.7
