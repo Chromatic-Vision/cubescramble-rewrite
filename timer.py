@@ -70,6 +70,8 @@ class Timer:
                         self.ready = 1
                         self.ms = 0
 
+                        self.particlerenderer.clear()
+
                 if event.key == pygame.K_s:
                     self.timing_method = 0 if self.timing_method == 1 else 1
                     self.reset(False)

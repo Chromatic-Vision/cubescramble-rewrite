@@ -48,8 +48,8 @@ class ParticleRenderer:
             self.y = random.randint(yv[0], yv[1])
 
             self.radius = random.uniform(1.6, 2.3)
-            self.vx = random.uniform(-2.0, 2.0)
-            self.vy = random.uniform(-2.0, 2.0)
+            self.vx = random.uniform(-2.5, 2.5)
+            self.vy = random.uniform(-2.5, 2.5)
             # self.color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.color = (255, 255, 255)
 
