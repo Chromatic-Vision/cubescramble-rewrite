@@ -80,7 +80,6 @@ class Timer:
                         self.ready = 0
                     elif self.ready == 2:
                         self.ready = 3
-                        self.running = True
                         self.on_start()
 
         if self.timing_method == 0:
@@ -113,7 +112,7 @@ class Timer:
                                 self.ready = 0
                             else:
                                 self.ready = 3
-                                self.running = True
+                                self.on_start()
 
                     elif self.stackmat.state.state == "C":
 
@@ -127,7 +126,7 @@ class Timer:
 
                     elif self.stackmat.state.state == " ":
                         self.ready = 3
-                        self.running = True
+                        self.on_start()
                 else:
 
                     if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
@@ -143,6 +142,9 @@ class Timer:
             assert False, f"Unknown timing method {self.timing_method}"
 
     def on_start(self):
+
+        self.running = True
+
         self.particlerenderer.clear()
 
     def stop(self):
