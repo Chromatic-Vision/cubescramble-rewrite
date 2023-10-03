@@ -3,8 +3,7 @@ import time
 
 import sounddevice
 
-import assets.render.particle
-from assets.render.particle import ParticleRenderer
+import renderer.particle
 from assets.scrambler import clock
 from assets.stackmat import stackmat
 
@@ -13,7 +12,7 @@ DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
 
 class Timer:
 
-    def __init__(self, particlerenderer: assets.render.particle.ParticleRenderer):
+    def __init__(self, particlerenderer: renderer.particle.ParticleRenderer):
         self.started_timestamp = time.time_ns()
         self.running = False
         self.ms = 0

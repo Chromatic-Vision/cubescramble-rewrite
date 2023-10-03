@@ -1,10 +1,9 @@
-import colorsys
 from typing import Union
 import pygame
 import calcutils
 import config
 import timer
-from assets.render.particle import ParticleRenderer
+from renderer.particle import ParticleRenderer
 
 
 class Game:

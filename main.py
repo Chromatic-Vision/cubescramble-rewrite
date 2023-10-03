@@ -5,10 +5,6 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-# size = (0, 0)
-# screen = pygame.display.set_mode(size, pygame.RESIZABLE)
-
-# game = game.Game(screen)
 game = game.Game()
 run = True
 
