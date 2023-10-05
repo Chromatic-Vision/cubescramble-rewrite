@@ -19,6 +19,8 @@ class ParticleRenderer:
                     # TODO: pygame wiki says blend is deprecated
                     pygame.draw.aaline(screen, self.particles[i].color, (self.particles[i].x, self.particles[i].y),
                                        (self.particles[j].x, self.particles[j].y), 1)
+                    # pygame.draw.aalines(screen, self.particles[i].color, False, [(self.particles[i].x, self.particles[i].y),
+                                        #(self.particles[j].x, self.particles[j].y)])
 
     def clear(self):
         for p in self.particles:
@@ -71,7 +73,7 @@ class ParticleRenderer:
             self.vx = random.uniform(-2.5, 2.5)
             self.vy = random.uniform(-2.5, 2.5)
             # self.color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            self.color = (255, 255, 255, 100)
+            self.color = (255, 255, 255, 169)
             self.fadeout = False
 
         def render(self, screen: pygame.surface.Surface):

@@ -14,5 +14,7 @@ while run:
     run = game.update()
     game.draw()
 
+    print(clock.get_fps())
+
 game.save()
 pygame.quit()

@@ -27,15 +27,18 @@ class Game:
         self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png")
         self.load()
 
-        self.background_image = None
-
-        # get background image
-        r = requests.get(self.background_url)
-
-        if r.status_code != 200:
-            print(repr(r))
-        else:
-            self.background_image = pygame.image.load(io.BytesIO(r.content))
+        # self.background_image = None
+        #
+        # # get background image
+        # r = requests.get(self.background_url)
+        #
+        # if r.status_code != 200:
+        #     print(repr(r))
+        # else:
+        #     self.background_image = pygame.image.load(io.BytesIO(r.content))
+        #
+        #     if self.background_image is not None:
+        #         self.background_image = pygame.transform.smoothscale(self.background_image, self.screen.get_size())
 
 
     def update(self) -> bool:  # returns True if the program should continue updating
@@ -60,9 +63,9 @@ class Game:
         screen = self.screen
         screen.fill((0, 0, 0))
 
-        if self.background_image is not None:
-            background_image = pygame.transform.smoothscale(self.background_image, screen.get_size())
-            screen.blit(background_image, (0, 0))
+        # TODO: fix performance
+        # if self.background_image is not None:
+            # screen.blit(self.background_image, (0, 0))
 
         """
         

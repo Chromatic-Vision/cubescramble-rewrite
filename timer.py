@@ -95,7 +95,7 @@ class Timer:
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
-                print(self.stackmat.state.state)
+                # print(self.stackmat.state.state)
 
                 self.ms = self.stackmat.state.time
                 self.error = None
@@ -129,7 +129,7 @@ class Timer:
                 else:
 
                     if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
-                        print("freeze detected!")
+                        # print("freeze detected!")
                         self.stop()
 
             else:
