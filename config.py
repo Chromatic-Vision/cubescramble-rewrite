@@ -8,7 +8,9 @@ CONFIG_FILE = 'config.json'
 @dataclass
 class Config:
     device_num: int
+    background_url: str
     times: List[int] = field(default_factory=list)
+
 
     def load(self):
         with open('config.json', 'r') as file:

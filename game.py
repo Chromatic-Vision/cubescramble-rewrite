@@ -1,5 +1,7 @@
 from typing import Union
 import pygame
+import requests
+import io
 import calcutils
 import config
 import timer
@@ -20,10 +22,21 @@ class Game:
 
         self.timer = timer.Timer(self.particlerenderer) # TODO: move those
 
-        self.config = config.Config(0)
+        self.background_url = ""
+
+        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png")
         self.load()
 
-        self.background_hue = 0
+        self.background_image = None
+
+        # get background image
+        r = requests.get(self.background_url)
+
+        if r.status_code != 200:
+            print(repr(r))
+        else:
+            self.background_image = pygame.image.load(io.BytesIO(r.content))
+
 
     def update(self) -> bool:  # returns True if the program should continue updating
 
@@ -44,11 +57,12 @@ class Game:
 
     def draw(self):
 
-        self.background_hue += 1
-
         screen = self.screen
         screen.fill((0, 0, 0))
-        # screen.fill(tuple(int(max(0, min(val * 255, 255))) for val in colorsys.hsv_to_rgb(((self.background_hue / 5.5) % 360) / 360, 255 / 100.0, 79 / 100.0)))
+
+        if self.background_image is not None:
+            background_image = pygame.transform.smoothscale(self.background_image, screen.get_size())
+            screen.blit(background_image, (0, 0))
 
         """
         
@@ -124,6 +138,8 @@ class Game:
         self.config.times = self.timer.time_history
         self.config.device_num = timer.DEVICE_NUM
 
+        self.config.background_url = self.background_url
+
         self.config.save()
 
     def load(self):
@@ -133,6 +149,8 @@ class Game:
             pass
         self.timer.time_history = self.config.times
         timer.DEVICE_NUM = self.config.device_num
+
+        self.background_url = self.config.background_url
 
 
 def time_str(time: Union[int, str], long: bool = False) -> str:
