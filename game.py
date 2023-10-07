@@ -24,22 +24,66 @@ class Game:
 
         self.background_url = ""
 
-        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png")
+        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png", False, True)
         self.load()
 
-        # self.background_image = None
-        #
-        # # get background image
-        # r = requests.get(self.background_url)
-        #
-        # if r.status_code != 200:
-        #     print(repr(r))
-        # else:
-        #     self.background_image = pygame.image.load(io.BytesIO(r.content))
-        #
-        #     if self.background_image is not None:
-        #         self.background_image = pygame.transform.smoothscale(self.background_image, self.screen.get_size())
+        self.background = None
+        self.background_image = None
+        self.background_raw = None
 
+        self.refresh_background()
+
+    def refresh_background(self):
+
+        if self.background_raw is not None:
+            if self.config.background_scale == 'aspect':
+                scale = self.background_raw.get_width() / self.screen.get_size()[0]
+                scale = max(scale, self.background_raw.get_height() / self.screen.get_size()[1])
+
+                self.background = pygame.transform.smoothscale(self.background_raw,
+                                                          (self.background_raw.get_width() / scale,
+                                                           self.background_raw.get_height() / scale))
+
+            elif self.config.background_scale:
+                self.background = pygame.transform.smoothscale(self.background_raw, self.screen.get_size())
+
+        if self.config.background_url is not None:
+            if not self.config.background_local:
+                r = requests.get(self.config.background_url)  # TODO: do in background
+                print(r.status_code)
+                if r.status_code != 200:
+                    self.background = None
+                    self.background_raw = None
+                    self.background_image = None
+                else:
+                    try:
+                        self.background_image = pygame.image.load(io.BytesIO(r.content))
+
+                    except pygame.error:
+                        print('background image brocken')
+                        self.background = None
+                        self.background_raw = None
+                        self.background_image = None
+            else:
+                try:
+                    self.background_image = pygame.image.load(self.config.background_url)
+                except pygame.error:
+                    background = None
+                    background_raw = None
+                    self.background_image = None
+
+            if self.background_image is not None:
+                background_raw = pygame.Surface(self.background_image.get_size())
+                background_raw.blit(self.background_image, (0, 0))
+                # necessary because surface would be wrong format and had to be converted every frame
+
+                if self.config.background_scale:
+                    self.background = pygame.transform.smoothscale(background_raw, self.screen.get_size())
+                else:
+                    self.background = background_raw
+        else:
+            self.background = None
+            self.background_raw = None
 
     def update(self) -> bool:  # returns True if the program should continue updating
 

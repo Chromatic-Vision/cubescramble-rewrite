@@ -9,6 +9,8 @@ CONFIG_FILE = 'config.json'
 class Config:
     device_num: int
     background_url: str
+    background_local: bool
+    background_scale: bool
     times: List[int] = field(default_factory=list)
 
 
@@ -59,8 +61,8 @@ class Config:
 
 if __name__ == '__main__':
     print(Config.__annotations__)
-    c = Config(69)
+    c = Config(69, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, True)
     c.save()
-    c.device_num = 0
+    c.device_num = 30
     c.load()
     print(c.device_num)
