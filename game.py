@@ -24,7 +24,7 @@ class Game:
 
         self.background_url = ""
 
-        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png", False, 'true')
+        self.config = config.Config(0, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, 'true')
         self.load()
 
         self.background = None
@@ -213,6 +213,7 @@ class Game:
         except FileNotFoundError:
             pass
         self.timer.time_history = self.config.times
+
         timer.DEVICE_NUM = self.config.device_num
 
         self.background_url = self.config.background_url
