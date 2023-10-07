@@ -10,7 +10,7 @@ class Config:
     device_num: int
     background_url: str
     background_local: bool
-    background_scale: bool
+    background_scale: str
     times: List[int] = field(default_factory=list)
 
 
@@ -26,6 +26,8 @@ class Config:
             return int(raw)
         elif type(raw) == str:
             return str(raw)
+        elif type(raw) == bool:
+            return bool(raw)
         elif type(raw) == list:
             out = []
             for item in raw:
@@ -50,6 +52,8 @@ class Config:
             return raw
         elif type(raw) == str:
             return raw
+        elif type(raw) == bool:
+            return raw
         elif type(raw) == list:
             out = []
             for item in raw:
@@ -61,7 +65,7 @@ class Config:
 
 if __name__ == '__main__':
     print(Config.__annotations__)
-    c = Config(69, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, True)
+    c = Config(69, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, 'aspect')
     c.save()
     c.device_num = 30
     c.load()

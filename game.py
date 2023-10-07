@@ -24,7 +24,7 @@ class Game:
 
         self.background_url = ""
 
-        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png", False, True)
+        self.config = config.Config(0, "https://snoworange420.github.io/assets/bob.png", False, 'true')
         self.load()
 
         self.background = None
@@ -35,23 +35,13 @@ class Game:
 
     def refresh_background(self):
 
-        if self.background_raw is not None:
-            if self.config.background_scale == 'aspect':
-                scale = self.background_raw.get_width() / self.screen.get_size()[0]
-                scale = max(scale, self.background_raw.get_height() / self.screen.get_size()[1])
-
-                self.background = pygame.transform.smoothscale(self.background_raw,
-                                                          (self.background_raw.get_width() / scale,
-                                                           self.background_raw.get_height() / scale))
-
-            elif self.config.background_scale:
-                self.background = pygame.transform.smoothscale(self.background_raw, self.screen.get_size())
-
-        if self.config.background_url is not None:
+        if self.config.background_url is not None and self.background_image is None:
+            # TODO: if you change the settings this should refresh
             if not self.config.background_local:
                 r = requests.get(self.config.background_url)  # TODO: do in background
                 print(r.status_code)
                 if r.status_code != 200:
+                    print('background image website did not return 200')
                     self.background = None
                     self.background_raw = None
                     self.background_image = None
@@ -68,9 +58,15 @@ class Game:
                 try:
                     self.background_image = pygame.image.load(self.config.background_url)
                 except pygame.error:
-                    background = None
-                    background_raw = None
+                    self.background = None
+                    self.background_raw = None
                     self.background_image = None
+                    print('background image brocken')
+                except FileNotFoundError:  # TODO: report errors in GUI
+                    self.background = None
+                    self.background_raw = None
+                    self.background_image = None
+                    print('image not found')
 
             if self.background_image is not None:
                 background_raw = pygame.Surface(self.background_image.get_size())
@@ -85,6 +81,25 @@ class Game:
             self.background = None
             self.background_raw = None
 
+        if self.background_image is not None:
+            self.background_raw = pygame.Surface(self.background_image.get_size())
+            self.background_raw.blit(self.background_image, (0, 0))
+
+        if self.background_raw is not None:
+            if self.config.background_scale == 'aspect':  # aspect scaling
+                scale = self.background_raw.get_width() / self.screen.get_size()[0]
+                scale = max(scale, self.background_raw.get_height() / self.screen.get_size()[1])
+
+                self.background = pygame.transform.smoothscale(self.background_raw,
+                                                          (self.background_raw.get_width() / scale,
+                                                           self.background_raw.get_height() / scale))
+
+            elif self.config.background_scale:  # full scaling
+                self.background = pygame.transform.smoothscale(self.background_raw, self.screen.get_size())
+
+            else:  # no scaling
+                self.background = self.background_raw
+
     def update(self) -> bool:  # returns True if the program should continue updating
 
         events = pygame.event.get()
@@ -98,6 +113,9 @@ class Game:
             elif event.type == pygame.QUIT:
                 return False
 
+            elif event.type == pygame.VIDEORESIZE:
+                self.refresh_background()
+
         self.timer.update(events)
 
         return True
@@ -108,8 +126,8 @@ class Game:
         screen.fill((0, 0, 0))
 
         # TODO: fix performance
-        # if self.background_image is not None:
-            # screen.blit(self.background_image, (0, 0))
+        if self.background is not None:
+            screen.blit(self.background, (0, 0))
 
         """
         
