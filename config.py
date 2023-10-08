@@ -62,12 +62,3 @@ class Config:
             return out
 
         return raw.save()
-
-
-if __name__ == '__main__':
-    print(Config.__annotations__)
-    c = Config(69, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, 'aspect')
-    c.save()
-    c.device_num = 30
-    c.load()
-    print(c.device_num)

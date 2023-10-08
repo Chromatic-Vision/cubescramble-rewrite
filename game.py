@@ -143,6 +143,7 @@ class Game:
         pygame.display.update()
 
     def draw_main(self, screen):
+
         """
 
         Code below is used to render the overall items on the screen.
@@ -215,7 +216,6 @@ class Game:
 
     def save(self):
         self.config.times = self.timer.time_history
-        self.config.device_num = timer.DEVICE_NUM
 
         self.config.save()
 

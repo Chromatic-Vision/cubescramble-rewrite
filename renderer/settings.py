@@ -67,6 +67,7 @@ class SettingsRenderer:
                 self.game.draw_string(self.game.font1, self.setting, (self.bx, self.y), background_color=b)
             elif self.setting_type == bool:
                 # TODO: proper rendering
+                # TODO: checkbox
                 if self.setting:
                     string = 'true'
                 else:
@@ -76,7 +77,7 @@ class SettingsRenderer:
             elif self.setting_type == int:
                 self.game.draw_string(self.game.font1, str(self.setting), (self.bx, self.y), background_color=b)
             elif self.setting_type == list:
-                self.game.draw_string(self.game.font1, '-', (self.bx, self.y), background_color=b)
+                self.game.draw_string(self.game.font1, str(self.setting), (self.bx, self.y), background_color=b)
             else:
                 # assert False, f"unimplemented type '{setting_type}'"
                 pass
