@@ -28,6 +28,27 @@ py -3 -m pip install pygame sounddevice numpy requests
 python3 main.py
 ```
 
+If the programs gives error like this:
+```
+Traceback (most recent call last):
+  File ".../cubescramble-rewrite/game.py", line 11, in <module>
+    import sounddevice as sd
+  File ".../site-packages/sounddevice.py", line 64, in <module>
+    raise OSError('PortAudio library not found')
+OSError: PortAudio library not found
+```
+
+try:
+```sh
+sudo apt-get install libportaudio2
+```
+
+or if that didn't work
+
+```sh
+sudo apt-get install libasound-dev
+```
+
 ### Windows
 
 ```cmd
