@@ -67,16 +67,6 @@ class Game:
                     self.background_raw = None
                     self.background_image = None
                     print('image not found')
-
-            if self.background_image is not None:
-                background_raw = pygame.Surface(self.background_image.get_size())
-                background_raw.blit(self.background_image, (0, 0))
-                # necessary because surface would be wrong format and had to be converted every frame
-
-                if self.config.background_scale:
-                    self.background = pygame.transform.smoothscale(background_raw, self.screen.get_size())
-                else:
-                    self.background = background_raw
         else:
             self.background = None
             self.background_raw = None
