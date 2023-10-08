@@ -37,10 +37,11 @@ class SettingsRenderer:
             self.button_surface = pygame.Surface((self.width, self.height))
             self.button_rect = pygame.Rect(self.bx, self.y, self.width, self.height)
 
+            self.state = "normal"
             self.fill_colors = {
-                'normal': (255, 255, 255),
+                'normal': None,
                 'hover': (100, 100, 100),
-                'pressed': (100, 100, 100)
+                'selected': (177, 177, 177)
             }
 
         def update(self, setting_name):
@@ -52,9 +53,15 @@ class SettingsRenderer:
             s = self.game.font1.render(self.setting_name, True, (255, 255, 255))
             self.game.screen.blit(s, (self.x, self.y))
 
-            b = None
+            self.state = "normal"
+
+            if self.button_rect.collidepoint(pygame.mouse.get_pos()):
+                self.state = "hover"
+
             if self.renderer.selected == self.setting_name:
-                b = (0, 0, 0)
+                self.state = "selected"
+
+            b = self.fill_colors[self.state]
 
             if self.setting_type == str:
                 self.game.draw_string(self.game.font1, self.setting, (self.bx, self.y), background_color=b)
@@ -81,6 +88,9 @@ class SettingsRenderer:
 
                 for b in self.buttons:
                     if b.button_rect.collidepoint(event.pos):
+
+                        b.state = "clicked"
+
                         self.selected = b.setting_name
 
                         if type(eval(f'self.config.{self.selected}')) == bool:
