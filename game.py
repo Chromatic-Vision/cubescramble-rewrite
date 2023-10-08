@@ -6,6 +6,7 @@ import calcutils
 import config
 import timer
 from renderer.particle import ParticleRenderer
+from renderer.settings import SettingsRenderer
 
 
 class Game:
@@ -20,12 +21,14 @@ class Game:
 
         self.particlerenderer = ParticleRenderer(self.screen)
 
-        self.timer = timer.Timer(self.particlerenderer) # TODO: move those
+        self.timer = timer.Timer(self.particlerenderer)
 
-        self.background_url = ""
+        self.state = 'main'
 
         self.config = config.Config(0, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, 'true')
         self.load()
+
+        self.settings_renderer = SettingsRenderer(self.config, self)
 
         self.background = None
         self.background_image = None
@@ -90,55 +93,69 @@ class Game:
             else:  # no scaling
                 self.background = self.background_raw
 
-    def update(self) -> bool:  # returns True if the program should continue updating
-
-        events = pygame.event.get()
+    def update(self, events: list[pygame.event.Event]):  # returns True if the program should continue updating
 
         for event in events:
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    return False
-
-            elif event.type == pygame.QUIT:
-                return False
-
-            elif event.type == pygame.VIDEORESIZE:
+            if event.type == pygame.VIDEORESIZE:
                 self.refresh_background()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
+                    if self.state == 'settings':
+                        self.background_image = None
+                        self.refresh_background()
 
+                        self.state = 'main'
+                    else:
+                        self.state = 'settings'
+
+        if self.state == 'main':
+            pass
+        elif self.state == 'settings':
+            self.settings_renderer.update(events)
+        else:
+            assert False, f"unknown state '{self.state}'"
         self.timer.update(events)
-
-        return True
 
     def draw(self):
 
         screen = self.screen
         screen.fill((0, 0, 0))
 
-        # TODO: fix performance
         if self.background is not None:
             screen.blit(self.background, (0, 0))
 
+        if self.state == 'main':
+            self.draw_main(screen)
+        elif self.state == 'settings':
+            self.settings_renderer.draw(screen)
+        else:
+            assert False, f"unknown state '{self.state}'"
+
+        pygame.display.update()
+
+    def draw_main(self, screen):
         """
-        
-        Code below is used to render the overall items on the screen.  
+
+        Code below is used to render the overall items on the screen.
         Adjust and modify the code however you want.
-        
+
         """
 
         # particles
-        self.particlerenderer.update()
+        if self.config.particles:
+            self.particlerenderer.update()
 
         """
-        
+
         Elements that only will be displayed if timer is inactive.
-        
+
         """
 
         if self.timer.ready <= 0 and not self.timer.running:
 
             # current scramble
-            self.draw_string(self.font1, self.timer.current_scramble, (self.screen.get_size()[0] / 2 - self.font1.size(self.timer.current_scramble)[0] / 2 - 5, 20))
+            self.draw_string(self.font1, self.timer.current_scramble, (
+                self.screen.get_size()[0] / 2 - self.font1.size(self.timer.current_scramble)[0] / 2 - 5, 20))
 
             # ao5
             ao5 = calcutils.get_average_of(self.timer.time_history, 5)
@@ -155,9 +172,9 @@ class Game:
             self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
 
         """
-        
+
         Elements that will be displayed all the time.
-        
+
         """
 
         # time
@@ -179,21 +196,17 @@ class Game:
                                          self.screen.get_size()[1] / 2 - self.font2.size(s)[1] / 2), color=c)
 
         """
-        
+
         End
-        
+
         """
 
-        pygame.display.update()
-
-    def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255)):
-        self.screen.blit(font.render(text, True, color), coords)
+    def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255), background_color=None):
+        self.screen.blit(font.render(text, True, color, background_color), coords)
 
     def save(self):
         self.config.times = self.timer.time_history
         self.config.device_num = timer.DEVICE_NUM
-
-        self.config.background_url = self.background_url
 
         self.config.save()
 
@@ -205,8 +218,6 @@ class Game:
         self.timer.time_history = self.config.times
 
         timer.DEVICE_NUM = self.config.device_num
-
-        self.background_url = self.config.background_url
 
 
 def time_str(time: Union[int, str], long: bool = False) -> str:

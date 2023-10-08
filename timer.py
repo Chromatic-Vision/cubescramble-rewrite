@@ -30,7 +30,7 @@ class Timer:
         self.particlerenderer = particlerenderer
 
         self.reset(False)
-        print(sounddevice.query_devices())
+        # print(sounddevice.query_devices())
 
     def reset(self, run):
 
@@ -69,7 +69,7 @@ class Timer:
                         self.ready = 1
                         self.ms = 0
 
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s and not event.mod & pygame.KMOD_CTRL:
                     self.timing_method = 0 if self.timing_method == 1 else 1
                     self.reset(False)
 
