@@ -104,6 +104,8 @@ class Game:
                         self.background_image = None
                         self.refresh_background()
 
+                        self.timer.time_history = self.config.times
+
                         self.state = 'main'
                     else:
                         self.state = 'settings'

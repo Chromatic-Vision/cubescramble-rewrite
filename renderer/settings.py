@@ -19,9 +19,17 @@ class SettingsRenderer:
                 if i < len(settings):
                     self.selected = settings[i]
 
-                    if type(eval(f'self.config.{self.selected}')) == bool:
+                    t = type(eval(f'self.config.{self.selected}'))
+                    if t == bool:
                         self.config.__dict__[self.selected] = not self.config.__dict__[self.selected]
                         self.selected = None
+                    elif t == list:
+                        old_len = len(self.config.__dict__[self.selected])
+
+                        self.config.__dict__[self.selected] = []
+
+                        if old_len != 0:
+                            self.selected = None
                 else:
                     self.selected = None
             elif event.type == pygame.TEXTINPUT:
