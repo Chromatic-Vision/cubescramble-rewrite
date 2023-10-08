@@ -90,8 +90,6 @@ class SettingsRenderer:
                 for b in self.buttons:
                     if b.button_rect.collidepoint(event.pos):
 
-                        b.state = "clicked"
-
                         self.selected = b.setting_name
 
                         if type(eval(f'self.config.{self.selected}')) == bool:
