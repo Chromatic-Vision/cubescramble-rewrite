@@ -31,9 +31,9 @@ python3 main.py
 If the programs gives error like this:
 ```
 Traceback (most recent call last):
-  File ".../cubescramble-rewrite/game.py", line 11, in <module>
+  File ".../cubescramble-rewrite/game.py", line ..., in <module>
     import sounddevice as sd
-  File ".../site-packages/sounddevice.py", line 64, in <module>
+  File ".../site-packages/sounddevice.py", line ..., in <module>
     raise OSError('PortAudio library not found')
 OSError: PortAudio library not found
 ```
