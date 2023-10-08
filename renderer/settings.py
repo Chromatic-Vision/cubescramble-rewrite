@@ -68,9 +68,9 @@ class SettingsRenderer:
             elif self.setting_type == bool:
                 # TODO: proper rendering
                 if self.setting:
-                    string = 'X'
+                    string = 'true'
                 else:
-                    string = 'O'
+                    string = 'false'
 
                 self.game.draw_string(self.game.font1, string, (self.bx, self.y), background_color=b)
             elif self.setting_type == int:
@@ -108,12 +108,33 @@ class SettingsRenderer:
                 if type(self.config.__dict__[self.selected]) == str:
                     self.config.__dict__[self.selected] += event.text
             elif event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_RETURN:
+                    if self.selected is not None:
+                        self.selected = None
+
                 if event.key == pygame.K_BACKSPACE:
                     if self.selected is None:
                         continue
 
                     if type(self.config.__dict__[self.selected]) == str:
                         self.config.__dict__[self.selected] = self.config.__dict__[self.selected][:-1]
+
+                    if type(self.config.__dict__[self.selected]) == int:
+                        self.config.__dict__[self.selected] = 0
+
+                if event.key == pygame.K_RIGHT:
+                    if self.selected is None:
+                        continue
+
+                    if type(self.config.__dict__[self.selected]) == int:
+                        self.config.__dict__[self.selected] += 1
+                elif event.key == pygame.K_LEFT:
+                    if self.selected is None:
+                        continue
+
+                    if type(self.config.__dict__[self.selected]) == int:
+                        self.config.__dict__[self.selected] -= 1
 
     def draw(self, screen: pygame.Surface):
 

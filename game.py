@@ -36,6 +36,8 @@ class Game:
 
         self.refresh_background()
 
+        update_mouse(not self.config.hide_mouse)
+
     def refresh_background(self):
 
         if self.config.background_url is not None and self.background_image is None:
@@ -93,7 +95,7 @@ class Game:
             else:  # no scaling
                 self.background = self.background_raw
 
-    def update(self, events: list[pygame.event.Event]):  # returns True if the program should continue updating
+    def update(self, events: list[pygame.event.Event]):
 
         for event in events:
             if event.type == pygame.VIDEORESIZE:
@@ -106,9 +108,13 @@ class Game:
 
                         self.timer.time_history = self.config.times
 
+                        update_mouse(not self.config.hide_mouse) # update mouse after done with settings
+
                         self.state = 'main'
                     else:
                         self.state = 'settings'
+
+                        update_mouse(True) # make mouse visible so you can configure settings
 
         if self.state == 'main':
             pass
@@ -116,6 +122,7 @@ class Game:
             self.settings_renderer.update(events)
         else:
             assert False, f"unknown state '{self.state}'"
+
         self.timer.update(events)
 
     def draw(self):
@@ -245,3 +252,7 @@ def time_str(time: Union[int, str], long: bool = False) -> str:
         out += f'{millis}'
 
     return out
+
+def update_mouse(visible):
+    pygame.mouse.set_visible(visible)
+    pygame.mouse.set_pos((pygame.mouse.get_pos()[0] - 0.0000000000069420, pygame.mouse.get_pos()[1]))

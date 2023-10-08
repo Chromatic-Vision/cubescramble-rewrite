@@ -13,6 +13,7 @@ class Config:
     background_scale: str
     times: List[int] = field(default_factory=list)
     particles: bool = True
+    hide_mouse: bool = True
 
     def load(self):
         with open('config.json', 'r') as file:
