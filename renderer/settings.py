@@ -122,6 +122,9 @@ class SettingsRenderer:
                     if type(self.config.__dict__[self.selected]) == int:
                         self.config.__dict__[self.selected] = 0
 
+                    if type(self.config.__dict__[self.selected]) == list:
+                        self.config.__dict__[self.selected] = []
+
                 if event.key == pygame.K_RIGHT:
                     if self.selected is None:
                         continue
