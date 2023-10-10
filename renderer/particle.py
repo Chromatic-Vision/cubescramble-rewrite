@@ -38,10 +38,10 @@ class ParticleRenderer:
         for p in self.particles:
             if p.fadeout:
                 p.color = (
-                    p.color[0] - 10,
-                    p.color[1] - 10,
-                    p.color[2] - 10,
-                    p.color[3] - 10,
+                    p.color[0] - 5,
+                    p.color[1] - 5,
+                    p.color[2] - 5,
+                    p.color[3] - 5,
                 )
                 if min(p.color) <= 0:
                     self.particles.remove(p)

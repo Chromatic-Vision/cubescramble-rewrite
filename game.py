@@ -117,13 +117,11 @@ class Game:
                         update_mouse(True) # make mouse visible so you can configure settings
 
         if self.state == 'main':
-            pass
+            self.timer.update(events)
         elif self.state == 'settings':
             self.settings_renderer.update(events)
         else:
             assert False, f"unknown state '{self.state}'"
-
-        self.timer.update(events)
 
     def draw(self):
 
