@@ -233,14 +233,14 @@ class Clock:
             self.move_with(amount, 12) # dr
         elif pins[0] and pins[1] and not pins[2] and pins[3]:
             self.move_with(amount, 13) # dl
-        elif pins[0] and pins[1] and not pins[2] and pins[3]:
+        elif not pins[0] and pins[1] and pins[2] and pins[3]:
             self.move_with(amount, 14) # ul
         else:
-            print("Unimplemented move!")
+            print(f"Unimplemented move! Pins: {str(self.pins)}")
 
-    def move_with(self, amount, move_index):
+    def move_with(self, amount, method):
 
-        move_rule = self.MOVE_STATE[move_index]
+        move_rule = self.MOVE_STATE[method]
 
         for i in range(move_rule.__len__()):
 
