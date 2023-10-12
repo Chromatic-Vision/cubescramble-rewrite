@@ -252,11 +252,15 @@ class Clock:
                 elif rule == -1:
                     print(f"Unexpected move state -1 at index {i} found. You can ignore this error if you are modding this software.")
 
+                self.front.states[i] %= 12
+
             else:
                 if rule == -1:
                     self.back.states[i - 9] -= amount
                 elif rule == 1:
                     print(f"Unexpected move state 1 at index {i} found. You can ignore this error if you are modding this software.")
+
+                self.back.states[i - 9] %= 12
 
 
     class Side:
