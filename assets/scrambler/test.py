@@ -25,7 +25,7 @@ while 1:
 
             for i in range(clock.pins.__len__()):
                 if fy <= ev.pos[1] <= fy + FONT_SIZE:
-                    clock.pins[i] = True if clock.pins[i] == False else False
+                    clock.pins[i] = True if not clock.pins[i] else False
 
                 fy += FONT_SIZE
 

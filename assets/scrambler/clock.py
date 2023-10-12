@@ -161,6 +161,38 @@ class Clock:
              0, 0, 0,
              -1, 0, 0
              ],  # \, 10
+
+            [1, 1, 0,
+             1, 1, 1,
+             1, 1, 1,
+
+             0, 0, -1,
+             0, 0, 0,
+             -1, 0, -1],  # ur, 11
+
+            [1, 1, 1,
+             1, 1, 1,
+             1, 1, 0,
+
+             -1, 0, -1,
+             0, 0, 0,
+             0, 0, -1],  # dr, 12
+
+            [1, 1, 1,
+             1, 1, 1,
+             0, 1, 1,
+
+             -1, 0, -1,
+             0, 0, 0,
+             -1, 0, 0],  # dl, 13
+
+            [0, 1, 1,
+             1, 1, 1,
+             1, 1, 1,
+
+             -1, 0, 0,
+             0, 0, 0,
+             -1, 0, -1],  # ul, 14
         ]
 
         self.pins = [True, True,
@@ -171,34 +203,43 @@ class Clock:
 
 
 
-    def move(self, amount, pins: [int, int, int, int]):
+    def move(self, amount, pins: [int, int, int, int]): # bruh
 
-        if pins[0] and pins[1] and pins[2] and pins[3]:
-            self.move_with(amount, 8)
-        elif pins[0] and not pins[1] and not pins[2] and not pins[3]:
-            self.move_with(amount, 3)
-        elif not pins[0] and pins[1] and not pins[2] and not pins[3]:
-            self.move_with(amount, 0)
-        elif not pins[0] and not pins[1] and pins[2] and not pins[3]:
-            self.move_with(amount, 2)
+        if not pins[0] and pins[1] and not pins[2] and not pins[3]:
+            self.move_with(amount, 0) # UR
         elif not pins[0] and not pins[1] and not pins[2] and pins[3]:
-            self.move_with(amount, 1)
+            self.move_with(amount, 1) # DR
+        elif not pins[0] and not pins[1] and pins[2] and not pins[3]:
+            self.move_with(amount, 2) # DL
+        elif pins[0] and not pins[1] and not pins[2] and not pins[3]:
+            self.move_with(amount, 3) # UL
         elif pins[0] and pins[1] and not pins[2] and not pins[3]:
-            self.move_with(amount, 4)
-        elif pins[0] and pins[2] and not pins[1] and not pins[3]:
-            self.move_with(amount, 7)
-        elif pins[0] and pins[3] and not pins[1] and not pins[2]:
-            self.move_with(amount, 10)
-        elif pins[1] and pins[2] and not pins[3] and not pins[0]:
-            self.move_with(amount, 9)
-        elif pins[1] and pins[3] and not pins[0] and not pins[2]:
-            self.move_with(amount, 5)
-        elif pins[2] and pins[3] and not pins[0] and not pins[1]:
-            self.move_with(amount, 6)
+            self.move_with(amount, 4) # U
+        elif not pins[0] and pins[1] and pins[3] and not pins[2]:
+            self.move_with(amount, 5) # R
+        elif not pins[0] and not pins[1] and pins[2] and pins[3]:
+            self.move_with(amount, 6) # D
+        elif pins[0] and not pins[1] and pins[2] and not pins[3]:
+            self.move_with(amount, 7) # L
+        elif pins[0] and pins[1] and pins[2] and pins[3]:
+            self.move_with(amount, 8) # ALL
+        elif not pins[0] and pins[1] and pins[2] and not pins[3]:
+            self.move_with(amount, 9) # /
+        elif pins[0] and not pins[1] and not pins[2] and pins[3]:
+            self.move_with(amount, 10) # \
+        elif pins[0] and not pins[1] and pins[2] and pins[3]:
+            self.move_with(amount, 11) # ul
+        elif pins[0] and pins[1] and pins[2] and not pins[3]:
+            self.move_with(amount, 12) # dr
+        elif pins[0] and pins[1] and not pins[2] and pins[3]:
+            self.move_with(amount, 13) # dl
+        elif pins[0] and pins[1] and not pins[2] and pins[3]:
+            self.move_with(amount, 14) # ul
         else:
-            print("not implemented")
+            print("Unimplemented move!")
 
     def move_with(self, amount, move_index):
+
         move_rule = self.MOVE_STATE[move_index]
 
         for i in range(move_rule.__len__()):
@@ -208,18 +249,14 @@ class Clock:
             if i < 9:
                 if rule == 1:
                     self.front.states[i] += amount
-                #elif rule == -1:
-                    #self.front.states[i] -= amount
-                    #print("how????")
+                elif rule == -1:
+                    print(f"Unexpected move state -1 at index {i} found. You can ignore this error if you are modding this software.")
 
             else:
                 if rule == -1:
                     self.back.states[i - 9] -= amount
-                else:
-                    print("how????")
-
-            #self.front.states[i] %= 12
-            #self.back.states[i] %= 12
+                elif rule == 1:
+                    print(f"Unexpected move state 1 at index {i} found. You can ignore this error if you are modding this software.")
 
 
     class Side:
