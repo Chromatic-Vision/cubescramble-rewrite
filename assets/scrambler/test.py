@@ -11,6 +11,8 @@ from assets.scrambler.clock import Clock
 
 clock = Clock()
 
+currents = 0
+
 while 1:
 
     screen.fill((0, 0, 0))
@@ -29,11 +31,20 @@ while 1:
 
                 fy += FONT_SIZE
 
+            if ev.pos[1] < 100:
+                print("yes")
+                if currents == 0:
+                    currents = 1
+                elif currents == 1:
+                    currents = 0
+
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_RIGHT:
-                clock.move(1, clock.pins)
+                clock.move(1, currents, clock.pins)
             elif ev.key == pygame.K_LEFT:
-                clock.move(-1, clock.pins)
+                clock.move(-1, currents, clock.pins)
+
+    print(currents)
 
 
     for i in range(clock.front.states.__len__()):
