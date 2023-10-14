@@ -163,7 +163,8 @@ class Timer:
 
         if self.event == "clock":
             self.current_scramble = clock.get_scramble()
-            self.clock = clock.Clock()
+            # self.clock = clock.Clock()
+            self.clock.reset()
             self.clock.convert_scramble(self.current_scramble)
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
@@ -171,6 +172,8 @@ class Timer:
         self.particlerenderer.refresh(70)
 
         self.time_history.append(self.ms)
+
+
 
     def get_color(self):
         pass

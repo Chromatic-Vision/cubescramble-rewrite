@@ -207,14 +207,22 @@ class Clock:
         self.front = Clock.Side(True)
         self.back = Clock.Side(False)
 
+    def reset(self):
+        self.front.states = [0, 0, 0,
+                             0, 0, 0,
+                             0, 0, 0]
+
+        self.back.states = [0, 0, 0,
+                            0, 0, 0,
+                            0, 0, 0]
+        self.pins = [True, True,
+                     True, True]
+
     def convert_scramble(self, scramble: str):
 
         blocks = scramble.split(" ")
         
         side = 0 # side where we're working at, 0 is front, 1 is back
-
-        self.pins = [True, True,
-                     True, True]
 
         for block in blocks:
 
