@@ -26,7 +26,17 @@ class Timer:
 
         self.time_history = []
 
-        self.current_scramble = clock.get_scramble()
+        self.event = "clock"
+
+        self.clock = clock.Clock()
+
+        if self.event == "clock":
+            self.current_scramble = clock.get_scramble()
+            self.clock.convert_scramble(self.current_scramble)
+        else:
+            self.current_scramble = f"No scrambler for event {self.event} yet!"
+
+
         self.particlerenderer = particlerenderer
 
         self.reset(False)
@@ -151,7 +161,11 @@ class Timer:
         self.ready = -1
         self.started_timestamp_spacebar = 0
 
-        self.current_scramble = clock.get_scramble()
+        if self.event == "clock":
+            self.current_scramble = clock.get_scramble()
+            self.clock.convert_scramble(self.current_scramble)
+        else:
+            self.current_scramble = f"No scrambler for event {self.event} yet!"
 
         self.particlerenderer.refresh(70)
 

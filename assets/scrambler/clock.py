@@ -1,4 +1,7 @@
 import random
+import re
+
+# TODO: simultaneously moves
 
 
 def get_scramble():
@@ -201,9 +204,61 @@ class Clock:
         self.front = Clock.Side(True)
         self.back = Clock.Side(False)
 
+    def convert_scramble(self, scramble: str):
 
+        blocks = scramble.split(" ")
 
-    def move(self, amount, side, pins: [int, int, int, int]): # bruh
+        self.pins = [False, False,
+                     False, False] # initialize pins
+        
+        side = 0 # side where we're working at, 0 is front, 1 is back
+
+        for block in blocks:
+
+            match = re.match(r'([A-Z]+)(\d+)([+-])', str(block), re.I) # split scramble block
+
+            if match:
+                
+                items = match.groups()
+
+                pin = items[0] # pin, e.g. UR
+                amount = int(items[1]) # amount, e.g. 5
+                direction = int(items[2] + "1") # indicates its direction that clock moves, e.g. +
+
+                if pin == "UR":
+                    self.move_with(amount * direction, side, 0)
+                elif pin == "DR":
+                    self.move_with(amount * direction, side, 1)
+                elif pin == "DL":
+                    self.move_with(amount * direction, side, 2)
+                elif pin == "UL":
+                    self.move_with(amount * direction, side, 3)
+                elif pin == "U":
+                    self.move_with(amount * direction, side, 4)
+                elif pin == "R":
+                    self.move_with(amount * direction, side, 5)
+                elif pin == "D":
+                    self.move_with(amount * direction, side, 6)
+                elif pin == "L":
+                    self.move_with(amount * direction, side, 7)
+                elif pin == "ALL":
+                    self.move_with(amount * direction, side, 8)
+            else:
+
+                pin = str(block)
+
+                if pin == "y2":
+                    side = 1 if side == 0 else 0
+                if pin == "UR":
+                    self.pins[1] = True
+                elif pin == "DR":
+                    self.pins[3] = True
+                elif pin == "DL":
+                    self.pins[2] = True
+                elif pin == "UL":
+                    self.pins[0] = True
+
+    def move(self, amount, side, pins: [int, int, int, int]): # bruh, at least it sort of like works
 
         if not pins[0] and pins[1] and not pins[2] and not pins[3]:
             self.move_with(amount, side, 0) # UR
@@ -238,7 +293,7 @@ class Clock:
         else:
             print(f"Unimplemented move! Pins: {str(self.pins)}")
 
-    def move_with(self, amount, side, method):
+    def move_with(self, amount, side, method): # this code sucks ngl
 
         move_rule = self.MOVE_STATE[method]
 

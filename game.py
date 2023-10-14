@@ -101,8 +101,10 @@ class Game:
             if event.type == pygame.VIDEORESIZE:
                 self.refresh_background()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:
+                if event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL: # switch UI
+
                     if self.state == 'settings':
+
                         self.background_image = None
                         self.refresh_background()
 
@@ -152,7 +154,7 @@ class Game:
 
         """
 
-        # particles
+        # particles, update of screen render
         if self.config.particles:
             self.particlerenderer.update()
 
@@ -167,6 +169,16 @@ class Game:
             # current scramble
             self.draw_string(self.font1, self.timer.current_scramble, (
                 self.screen.get_size()[0] / 2 - self.font1.size(self.timer.current_scramble)[0] / 2 - 5, 20))
+
+            # draw scramble
+            if self.config.draw_scramble:
+
+                if self.timer.event == "clock":
+
+                    x = self.screen.get_size()[0] - 400
+                    y = self.screen.get_size()[1] - 200
+
+                    pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 400, y + 200))
 
             # ao5
             ao5 = calcutils.get_average_of(self.timer.time_history, 5)

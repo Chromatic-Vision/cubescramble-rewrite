@@ -11,6 +11,7 @@ class Config:
     background_url: str
     background_local: bool
     background_scale: str
+    draw_scramble: bool = True
     times: List[int] = field(default_factory=list)
     particles: bool = True
     hide_mouse: bool = True

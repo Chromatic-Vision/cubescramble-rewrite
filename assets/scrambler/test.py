@@ -7,10 +7,14 @@ FONT_SIZE = 50
 font = pygame.font.SysFont("bahnschrift", 50)
 
 arfaere = pygame.time.Clock()
-from assets.scrambler.clock import Clock
+import assets.scrambler.clock as c
 
-clock = Clock()
+clock = c.Clock()
 
+d = c.get_scramble()
+print(d)
+
+clock.convert_scramble(d)
 currents = 0
 
 while 1:
@@ -44,7 +48,7 @@ while 1:
             elif ev.key == pygame.K_LEFT:
                 clock.move(-1, currents, clock.pins)
 
-    print(currents)
+    # print(currents)
 
 
     for i in range(clock.front.states.__len__()):
