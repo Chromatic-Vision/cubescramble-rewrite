@@ -32,7 +32,7 @@ class Game:
 
         self.state = 'main'
 
-        self.config = config.Config(0, "https://chromatic-vision.github.io/assets/images/forest-background.png", False, 'true')
+        self.config = config.Config(1, "example.png", True, 'aspect')
         self.load()
 
         self.settings_renderer = SettingsRenderer(self.config, self)
@@ -94,8 +94,8 @@ class Game:
                 scale = max(scale, self.background_raw.get_height() / self.screen.get_size()[1])
 
                 self.background = pygame.transform.smoothscale(self.background_raw,
-                                                          (self.background_raw.get_width() / scale,
-                                                           self.background_raw.get_height() / scale))
+                                                               (self.background_raw.get_width() / scale,
+                                                                self.background_raw.get_height() / scale))
 
             elif self.config.background_scale:  # full scaling
                 self.background = pygame.transform.smoothscale(self.background_raw, self.screen.get_size())
@@ -109,7 +109,7 @@ class Game:
             if event.type == pygame.VIDEORESIZE:
                 self.refresh_background()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL: # switch UI
+                if event.key == pygame.K_s and event.mod & pygame.KMOD_CTRL:  # switch UI
 
                     if self.state == 'settings':
 
@@ -119,15 +119,15 @@ class Game:
                         self.timer.time_history = self.config.times
 
                         timer.DEVICE_NUM = self.config.device_num
-                        self.timer.reset(False) # update DEVICE_NUM of stackmat timer
+                        self.timer.reset(False)  # update DEVICE_NUM of stackmat timer
 
-                        update_mouse(not self.config.hide_mouse) # update mouse after done with settings
+                        update_mouse(not self.config.hide_mouse)  # update mouse after done with settings
 
                         self.state = 'main'
                     else:
                         self.state = 'settings'
 
-                        update_mouse(True) # make mouse visible so you can configure settings
+                        update_mouse(True)  # make mouse visible so you can configure settings
 
         if self.state == 'main':
             self.timer.update(events)
@@ -219,7 +219,8 @@ class Game:
                         draw_antialias_circle(screen, color, x, y, clock_radius)
 
                         draw_aa_pie(screen, (255, 255, 255), (x, y),
-                                    (x + math.sin(state * (math.pi / 6)) * clock_radius, y + math.cos(state * (math.pi / 6)) * clock_radius), 3)
+                                    (x + math.sin(state * (math.pi / 6)) * clock_radius,
+                                     y + math.cos(state * (math.pi / 6)) * clock_radius), 3)
 
                     # for i, state in enumerate(self.timer.clock.back.states):
                     #     draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
@@ -303,8 +304,6 @@ class Game:
         if ao12 == -1:
             ao12 = '-'
         self.ao12 = time_str(ao12, True)
-
-
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255), background_color=None):
         self.screen.blit(font.render(text, True, color, background_color), coords)
