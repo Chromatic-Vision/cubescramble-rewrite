@@ -163,6 +163,7 @@ class Timer:
 
         if self.event == "clock":
             self.current_scramble = clock.get_scramble()
+            self.clock = clock.Clock()
             self.clock.convert_scramble(self.current_scramble)
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
