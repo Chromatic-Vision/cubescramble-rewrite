@@ -1,8 +1,9 @@
 from typing import Union
 import pygame
-from pygame import gfxdraw
+import pygame.gfxdraw
 import requests
 import io
+import math
 
 import assets.scrambler.clock
 import calcutils
@@ -175,6 +176,7 @@ class Game:
 
             # draw scramble
             if self.config.draw_scramble:
+                # TODO: make scrambler responsible for drawing itself
 
                 if self.timer.event == "clock":
 
@@ -188,11 +190,35 @@ class Game:
                     fy = y + 45
 
                     # clocks
-                    for i in range(self.timer.clock.front.states.__len__()):
-                        draw_antialias_circle(screen, (64, 77, 255), i % 3 * 55 + fx, i // 3 * 55 + fy, 23)
+                    clock_radius = 23
+                    dot_radius = 3
 
-                    for i in range(self.timer.clock.back.states.__len__()):
-                        draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
+                    for i, state in enumerate(self.timer.clock.front.states + self.timer.clock.back.states):
+                        state += 6
+                        state = -state
+                        state = state % 12
+
+                        x, y = i % 3 * 55 + fx, i // 3 * 55 + fy
+                        color = (64, 77, 255)
+                        if i >= 9:
+                            x += 195
+                            y -= 55 * 3
+                            color = (155, 177, 25)
+
+                        for j in range(12):
+                            pointer_color = tuple(min(color[i] + 30, 255) for i in range(3))
+                            draw_antialias_circle(screen, pointer_color,
+                                                  x + math.sin(j * (math.pi / 6)) * (clock_radius + dot_radius * 0),
+                                                  y + math.cos(j * (math.pi / 6)) * (clock_radius + dot_radius * 0),
+                                                  dot_radius)
+
+                        draw_antialias_circle(screen, color, x, y, clock_radius)
+
+                        draw_aa_pie(screen, (255, 255, 255), (x, y),
+                                    (x + math.sin(state * (math.pi / 6)) * clock_radius, y + math.cos(state * (math.pi / 6)) * clock_radius), 3)
+
+                    # for i, state in enumerate(self.timer.clock.back.states):
+                    #     draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
 
                     # pins
                     front_pins = self.timer.clock.pins
@@ -302,10 +328,31 @@ def time_str(time: Union[int, str], long: bool = False) -> str:
 
     return out
 
+
 def update_mouse(visible):
     pygame.mouse.set_visible(visible)
     pygame.mouse.set_pos((pygame.mouse.get_pos()[0] - 0.0000000000069420, pygame.mouse.get_pos()[1]))
 
+
 def draw_antialias_circle(surface, color, x, y, radius):
-    gfxdraw.aacircle(surface, x, y, radius, color)
-    gfxdraw.filled_circle(surface, x, y, radius, color)
+    pygame.gfxdraw.aacircle(surface, round(x), round(y), radius, color)
+    pygame.gfxdraw.filled_circle(surface, round(x), round(y), radius, color)
+
+
+def draw_aa_pie(surface, color, from_, to, radius):
+    draw_antialias_circle(surface, color, from_[0], from_[1], radius)
+
+    direction = math.atan2(from_[0] - to[0], from_[1] - to[1])
+
+    args = [
+        surface,
+        round(from_[0] + math.sin(direction + math.pi / 2) * radius),
+        round(from_[1] + math.cos(direction + math.pi / 2) * radius),
+
+        round(from_[0] + math.sin(direction - math.pi / 2) * radius),
+        round(from_[1] + math.cos(direction - math.pi / 2) * radius),
+
+        round(to[0]), round(to[1]), color
+    ]
+    pygame.gfxdraw.filled_trigon(*args)
+    pygame.gfxdraw.aatrigon(*args)
