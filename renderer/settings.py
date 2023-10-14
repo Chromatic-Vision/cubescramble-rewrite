@@ -1,4 +1,6 @@
 import pygame
+import sounddevice
+
 from config import Config
 
 
@@ -75,7 +77,18 @@ class SettingsRenderer:
 
                 self.game.draw_string(self.game.font1, string, (self.bx, self.y), background_color=b)
             elif self.setting_type == int:
-                self.game.draw_string(self.game.font1, str(self.setting), (self.bx, self.y), background_color=b)
+                if self.setting_name == "device_num":
+
+                    r = "Invalid device"
+
+                    try:
+                        r = str(sounddevice.query_devices()[self.setting]["name"])
+                    except:
+                        pass
+
+                    self.game.draw_string(self.game.font1, str(self.setting) + ": " + r, (self.bx, self.y), background_color=b)
+                else:
+                    self.game.draw_string(self.game.font1, str(self.setting), (self.bx, self.y), background_color=b)
             elif self.setting_type == list:
                 self.game.draw_string(self.game.font1, str(self.setting), (self.bx, self.y), background_color=b)
             else:

@@ -108,6 +108,9 @@ class Game:
 
                         self.timer.time_history = self.config.times
 
+                        timer.DEVICE_NUM = self.config.device_num
+                        self.timer.reset(False) # update DEVICE_NUM of stackmat timer
+
                         update_mouse(not self.config.hide_mouse) # update mouse after done with settings
 
                         self.state = 'main'

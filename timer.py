@@ -7,7 +7,7 @@ import renderer.particle
 from assets.scrambler import clock
 from assets.stackmat import stackmat
 
-DEVICE_NUM = 30  # TODO: be able to choose device number in GUI
+DEVICE_NUM = 30
 
 
 class Timer:
