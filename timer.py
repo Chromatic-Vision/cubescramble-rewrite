@@ -29,12 +29,7 @@ class Timer:
         self.event = "clock"
 
         self.clock = clock.Clock()
-
-        if self.event == "clock":
-            self.current_scramble = clock.get_scramble()
-            self.clock.convert_scramble(self.current_scramble)
-        else:
-            self.current_scramble = f"No scrambler for event {self.event} yet!"
+        self.rescramble()
 
         self.game = game
 
@@ -81,6 +76,9 @@ class Timer:
                 if event.key == pygame.K_s and not event.mod & pygame.KMOD_CTRL:
                     self.timing_method = 0 if self.timing_method == 1 else 1
                     self.reset(False)
+
+                if event.key == pygame.K_r:
+                    self.rescramble()
 
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
@@ -162,6 +160,14 @@ class Timer:
 
         self.game.on_timer_stop()
 
+        self.rescramble()
+
+        self.time_history.append(self.ms)
+
+    def get_color(self): # ???
+        pass
+
+    def rescramble(self):
         if self.event == "clock":
             self.current_scramble = clock.get_scramble()
             # self.clock = clock.Clock()
@@ -169,8 +175,3 @@ class Timer:
             self.clock.convert_scramble(self.current_scramble)
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
-
-        self.time_history.append(self.ms)
-
-    def get_color(self): # ???
-        pass

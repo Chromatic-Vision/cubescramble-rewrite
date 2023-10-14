@@ -22,7 +22,7 @@ while run:
     game.update(events)
     game.draw()
 
-    print(clock.get_fps())
+    # print(clock.get_fps())
 
 game.save()
 pygame.quit()
