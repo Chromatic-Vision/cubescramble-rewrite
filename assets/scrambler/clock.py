@@ -61,6 +61,9 @@ def random_pins():
     return res
 
 
+def invert_pins(pins):
+    return [not pins[1], not pins[0], not pins[3], not pins[2]]
+
 class Clock:
 
     def __init__(self):
@@ -207,11 +210,11 @@ class Clock:
     def convert_scramble(self, scramble: str):
 
         blocks = scramble.split(" ")
-
-        self.pins = [False, False,
-                     False, False] # initialize pins
         
         side = 0 # side where we're working at, 0 is front, 1 is back
+
+        self.pins = [True, True,
+                     True, True]
 
         for block in blocks:
 
@@ -243,20 +246,41 @@ class Clock:
                     self.move_with(amount * direction, side, 7)
                 elif pin == "ALL":
                     self.move_with(amount * direction, side, 8)
-            else:
+            else: # special cases
 
                 pin = str(block)
 
                 if pin == "y2":
-                    side = 1 if side == 0 else 0
-                if pin == "UR":
-                    self.pins[1] = True
-                elif pin == "DR":
-                    self.pins[3] = True
-                elif pin == "DL":
-                    self.pins[2] = True
-                elif pin == "UL":
-                    self.pins[0] = True
+                    if side == 0:
+                        self.pins = [True, True,
+                                     True, True]
+
+                        side = 1
+
+                    elif side == 1:
+                        self.pins = [False, False,
+                                     False, False]
+
+                        side = 0
+
+                if side == 0:
+                    if pin == "UR":
+                        self.pins[1] = True
+                    elif pin == "DR":
+                        self.pins[3] = True
+                    elif pin == "DL":
+                        self.pins[2] = True
+                    elif pin == "UL":
+                        self.pins[0] = True
+                elif side == 1:
+                    if pin == "UR":
+                        self.pins[0] = False
+                    elif pin == "DR":
+                        self.pins[2] = False
+                    elif pin == "DL":
+                        self.pins[3] = False
+                    elif pin == "UL":
+                        self.pins[1] = False
 
     def move(self, amount, side, pins: [int, int, int, int]): # bruh, at least it sort of like works
 

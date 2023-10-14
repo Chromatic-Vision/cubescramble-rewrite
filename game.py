@@ -1,7 +1,10 @@
 from typing import Union
 import pygame
+from pygame import gfxdraw
 import requests
 import io
+
+import assets.scrambler.clock
 import calcutils
 import config
 import timer
@@ -175,10 +178,43 @@ class Game:
 
                 if self.timer.event == "clock":
 
-                    x = self.screen.get_size()[0] - 400
+                    x = self.screen.get_size()[0] - 395
                     y = self.screen.get_size()[1] - 200
 
+                    # background
                     pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 400, y + 200))
+
+                    fx = x + 45
+                    fy = y + 45
+
+                    # clocks
+                    for i in range(self.timer.clock.front.states.__len__()):
+                        draw_antialias_circle(screen, (64, 77, 255), i % 3 * 55 + fx, i // 3 * 55 + fy, 23)
+
+                    for i in range(self.timer.clock.back.states.__len__()):
+                        draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
+
+                    # pins
+                    front_pins = self.timer.clock.pins
+                    back_pins = assets.scrambler.clock.invert_pins(front_pins)
+
+                    for i in range(front_pins.__len__()):
+
+                        color = (86, 86, 25)
+
+                        if front_pins[i]:
+                            color = (255, 255, 0)
+
+                        draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28, i // 2 * 55 + fy + 28, 9)
+
+                    for i in range(back_pins.__len__()):
+
+                        color = (86, 86, 25)
+
+                        if back_pins[i]:
+                            color = (255, 255, 0)
+
+                        draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28 + 194, i // 2 * 55 + fy + 28, 9)
 
             # ao5
             ao5 = calcutils.get_average_of(self.timer.time_history, 5)
@@ -269,3 +305,7 @@ def time_str(time: Union[int, str], long: bool = False) -> str:
 def update_mouse(visible):
     pygame.mouse.set_visible(visible)
     pygame.mouse.set_pos((pygame.mouse.get_pos()[0] - 0.0000000000069420, pygame.mouse.get_pos()[1]))
+
+def draw_antialias_circle(surface, color, x, y, radius):
+    gfxdraw.aacircle(surface, x, y, radius, color)
+    gfxdraw.filled_circle(surface, x, y, radius, color)
