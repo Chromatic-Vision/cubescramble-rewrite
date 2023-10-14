@@ -32,7 +32,7 @@ class Game:
 
         self.state = 'main'
 
-        self.config = config.Config(1, "example.png", True, 'aspect')
+        self.config = config.Config(1, "example.png", True, 'true')
         self.load()
 
         self.settings_renderer = SettingsRenderer(self.config, self)
