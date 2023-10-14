@@ -12,7 +12,7 @@ DEVICE_NUM = 30
 
 class Timer:
 
-    def __init__(self, particlerenderer: renderer.particle.ParticleRenderer):
+    def __init__(self, game):
         self.started_timestamp = time.time_ns()
         self.running = False
         self.ms = 0
@@ -36,8 +36,7 @@ class Timer:
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
 
-
-        self.particlerenderer = particlerenderer
+        self.game = game
 
         self.reset(False)
         # print(sounddevice.query_devices())
@@ -153,13 +152,15 @@ class Timer:
     def on_start(self):
 
         self.running = True
-
-        self.particlerenderer.clear()
+        self.game.on_timer_start()
 
     def stop(self):
+
         self.running = False
         self.ready = -1
         self.started_timestamp_spacebar = 0
+
+        self.game.on_timer_stop()
 
         if self.event == "clock":
             self.current_scramble = clock.get_scramble()
@@ -169,11 +170,7 @@ class Timer:
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
 
-        self.particlerenderer.refresh(70)
-
         self.time_history.append(self.ms)
 
-
-
-    def get_color(self):
+    def get_color(self): # ???
         pass

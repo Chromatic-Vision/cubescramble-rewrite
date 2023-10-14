@@ -25,7 +25,10 @@ class Game:
 
         self.particlerenderer = ParticleRenderer(self.screen)
 
-        self.timer = timer.Timer(self.particlerenderer)
+        self.timer = timer.Timer(self)
+
+        self.ao5 = ""
+        self.ao12 = ""
 
         self.state = 'main'
 
@@ -39,6 +42,7 @@ class Game:
         self.background_raw = None
 
         self.refresh_background()
+        self.refresh_time_list()
 
         update_mouse(not self.config.hide_mouse)
 
@@ -243,18 +247,10 @@ class Game:
                         draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28 + 194, i // 2 * 55 + fy + 28, 9)
 
             # ao5
-            ao5 = calcutils.get_average_of(self.timer.time_history, 5)
-            if ao5 == -1:
-                ao5 = '-'
-            ao5 = time_str(ao5, True)
-            self.draw_string(self.font1, f"ao5: {ao5}", (5, screen.get_size()[1] - 65))
+            self.draw_string(self.font1, f"ao5: {self.ao5}", (5, screen.get_size()[1] - 65))
 
             # ao12
-            ao12 = calcutils.get_average_of(self.timer.time_history, 12)
-            if ao12 == -1:
-                ao12 = '-'
-            ao12 = time_str(ao12, True)
-            self.draw_string(self.font1, f"ao12: {ao12}", (5, screen.get_size()[1] - 40))
+            self.draw_string(self.font1, f"ao12: {self.ao12}", (5, screen.get_size()[1] - 40))
 
         """
 
@@ -285,6 +281,30 @@ class Game:
         End
 
         """
+
+    def on_timer_start(self):
+        self.particlerenderer.clear()
+
+    def on_timer_stop(self):
+
+        self.refresh_time_list()
+        self.particlerenderer.refresh(70)
+
+    def refresh_time_list(self):
+
+        # ao5
+        ao5 = calcutils.get_average_of(self.timer.time_history, 5)
+        if ao5 == -1:
+            ao5 = '-'
+        self.ao5 = time_str(ao5, True)
+
+        # ao12
+        ao12 = calcutils.get_average_of(self.timer.time_history, 12)
+        if ao12 == -1:
+            ao12 = '-'
+        self.ao12 = time_str(ao12, True)
+
+
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255), background_color=None):
         self.screen.blit(font.render(text, True, color, background_color), coords)
