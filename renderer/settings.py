@@ -207,4 +207,4 @@ class SettingsRenderer:
             b.draw()
 
 def open_docs():
-    webbrowser.open("https://github.com/chromatic-vision/cubescramble-rewrite/HELP.md")
+    webbrowser.open("https://github.com/Chromatic-Vision/cubescramble-rewrite/blob/main/HELP.md")
