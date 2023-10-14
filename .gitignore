@@ -163,6 +163,6 @@ config.json
 
 # image files
 
-
+*.png
 *.jpg
 *.jpeg
