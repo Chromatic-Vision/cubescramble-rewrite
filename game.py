@@ -199,11 +199,11 @@ class Game:
                         state = state % 12
 
                         x, y = i % 3 * 55 + fx, i // 3 * 55 + fy
-                        color = (64, 77, 255)
+                        color = (77, 117, 255)
                         if i >= 9:
                             x += 195
                             y -= 55 * 3
-                            color = (155, 177, 25)
+                            color = (21, 96, 189)
 
                         for j in range(12):
                             pointer_color = tuple(min(color[i] + 30, 255) for i in range(3))
@@ -226,7 +226,7 @@ class Game:
 
                     for i in range(front_pins.__len__()):
 
-                        color = (86, 86, 25)
+                        color = (126, 126, 35)
 
                         if front_pins[i]:
                             color = (255, 255, 0)
@@ -235,7 +235,7 @@ class Game:
 
                     for i in range(back_pins.__len__()):
 
-                        color = (86, 86, 25)
+                        color = (126, 126, 35)
 
                         if back_pins[i]:
                             color = (255, 255, 0)
