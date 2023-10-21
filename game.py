@@ -6,7 +6,6 @@ import io
 import math
 
 import assets.scrambler.clock
-import calcutils
 import config
 import timer
 from renderer.particle import ParticleRenderer
@@ -23,18 +22,15 @@ class Game:
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
 
-        self.particlerenderer = ParticleRenderer(self.screen)
-
         self.timer = timer.Timer(self)
-
-        self.ao5 = ""
-        self.ao12 = ""
+        self.time_stats = timer.TimeStats()
 
         self.state = 'main'
 
         self.config = config.Config(1, "example.png", True, 'true')
         self.load()
 
+        self.particle_renderer = ParticleRenderer(self.screen)
         self.settings_renderer = SettingsRenderer(self.config, self)
 
         self.background = None
@@ -42,7 +38,7 @@ class Game:
         self.background_raw = None
 
         self.refresh_background()
-        self.refresh_time_list()
+        self.timer.refresh_stats()
 
         update_mouse(not self.config.hide_mouse)
 
@@ -117,6 +113,7 @@ class Game:
                         self.refresh_background()
 
                         self.timer.time_history = self.config.times
+                        self.timer.refresh_stats()
 
                         timer.DEVICE_NUM = self.config.device_num
                         self.timer.reset(False)  # update DEVICE_NUM of stackmat timer
@@ -164,7 +161,7 @@ class Game:
 
         # particles, update of screen render
         if self.config.particles:
-            self.particlerenderer.update()
+            self.particle_renderer.update()
 
         """
 
@@ -247,11 +244,15 @@ class Game:
 
                         draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28 + 194, i // 2 * 55 + fy + 28, 9)
 
-            # ao5
-            self.draw_string(self.font1, f"ao5: {self.ao5}", (5, screen.get_size()[1] - 65))
 
-            # ao12
-            self.draw_string(self.font1, f"ao12: {self.ao12}", (5, screen.get_size()[1] - 40))
+            # time stats
+            reversed_time_stats_list = self.time_stats.stats[::-1]
+
+            tx = 0
+
+            for stat in reversed_time_stats_list:
+                self.draw_string(self.font1, f"{stat.type}{stat.amount}: {time_str(stat.ms, long=True)}", (5, screen.get_size()[1] - 40 - tx))
+                tx += 25
 
         """
 
@@ -284,26 +285,11 @@ class Game:
         """
 
     def on_timer_start(self):
-        self.particlerenderer.clear()
+        self.particle_renderer.clear()
 
     def on_timer_stop(self):
+        self.particle_renderer.refresh(70)
 
-        self.refresh_time_list()
-        self.particlerenderer.refresh(70)
-
-    def refresh_time_list(self):
-
-        # ao5
-        ao5 = calcutils.get_average_of(self.timer.time_history, 5)
-        if ao5 == -1:
-            ao5 = '-'
-        self.ao5 = time_str(ao5, True)
-
-        # ao12
-        ao12 = calcutils.get_average_of(self.timer.time_history, 12)
-        if ao12 == -1:
-            ao12 = '-'
-        self.ao12 = time_str(ao12, True)
 
     def draw_string(self, font: pygame.font.Font, text, coords, color=(255, 255, 255), background_color=None):
         self.screen.blit(font.render(text, True, color, background_color), coords)
@@ -324,8 +310,12 @@ class Game:
 
 
 def time_str(time: Union[int, str], long: bool = False) -> str:
+
     if type(time) == str:
         return time
+
+    if time == -1:
+        return "-"
 
     seconds = time // 1000 % 60
     out = ''

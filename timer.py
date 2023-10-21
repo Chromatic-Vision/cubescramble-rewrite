@@ -3,6 +3,7 @@ import time
 
 import sounddevice
 
+import calcutils
 import renderer.particle
 from assets.scrambler import clock
 from assets.stackmat import stackmat
@@ -158,11 +159,17 @@ class Timer:
         self.ready = -1
         self.started_timestamp_spacebar = 0
 
-        self.game.on_timer_stop()
-
         self.rescramble()
 
         self.time_history.append(self.ms)
+        self.refresh_stats()
+
+        self.game.on_timer_stop()
+
+    def refresh_stats(self):
+        for stat in self.game.time_stats.stats:
+            stat.refresh(self.time_history)
+
 
     def get_color(self): # ???
         pass
@@ -175,3 +182,20 @@ class Timer:
             self.clock.convert_scramble(self.current_scramble)
         else:
             self.current_scramble = f"No scrambler for event {self.event} yet!"
+
+
+class TimeStats:
+
+    def __init__(self):
+        self.stats = [TimeStats.Stat("ao", 5), TimeStats.Stat("ao", 12)]
+
+    class Stat:
+
+        def __init__(self, type, amount):
+            self.type = type
+            self.amount = amount
+            self.ms = 0
+
+        def refresh(self, times):
+            if self.type == "ao":
+                self.ms = calcutils.get_average_of(times, self.amount)
