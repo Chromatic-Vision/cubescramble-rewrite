@@ -29,7 +29,7 @@ class HistoryRenderer:
         self.s.fill((0, 0, 0))
         border = 200
 
-        stats = [GraphStat("Single", (112, 255, 255),
+        stats = [GraphStat("single", (112, 255, 255),
                            self.config.times[
                            -self.config.history_draw_length if len(
                                self.config.times) > self.config.history_draw_length else None:
@@ -92,9 +92,6 @@ class HistoryRenderer:
         longest = max(max(time for time in graph_stat.data if time is not None) for graph_stat in stats)
         shortest = min(min(time for time in graph_stat.data if time is not None) for graph_stat in stats)
 
-        print(longest)
-        print(shortest)
-
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox, oy + height), 1)
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox + width, oy), 1)
 
@@ -108,6 +105,9 @@ class HistoryRenderer:
         s = self.game.font1.render(game.time_str(shortest, True), True, (200, 200, 200))
         w = s.get_width()
         screen.blit(s, (ox - w, oy + y))
+
+        ty = oy + height + 15
+        gw = self.game.font1.get_height()
 
         for stat in stats:
             old_x = None
@@ -126,3 +126,11 @@ class HistoryRenderer:
                 game.draw_antialias_circle(screen, stat.color, ox + x, oy + y, 4)
                 old_x = x
                 old_y = y
+
+            pygame.draw.rect(screen, stat.color,(ox, ty, gw, gw))
+            s = self.game.font1.render(stat.name, True, (200, 200, 200))
+            screen.blit(s, (ox + gw + 5, ty))
+
+            ty += gw
+
+
