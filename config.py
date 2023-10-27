@@ -15,6 +15,7 @@ class Config:
     times: List[int] = field(default_factory=list)
     particles: bool = True
     hide_mouse: bool = True
+    history_draw_length: int = 1000
 
     def load(self):
         with open('config.json', 'r') as file:

@@ -10,6 +10,7 @@ import config
 import timer
 from renderer.particle import ParticleRenderer
 from renderer.settings import SettingsRenderer
+from renderer.history import HistoryRenderer
 
 
 class Game:
@@ -32,6 +33,7 @@ class Game:
 
         self.particle_renderer = ParticleRenderer(self.screen)
         self.settings_renderer = SettingsRenderer(self.config, self)
+        self.history_renderer = HistoryRenderer(self.config, self)
 
         self.background = None
         self.background_image = None
@@ -125,11 +127,19 @@ class Game:
                         self.state = 'settings'
 
                         update_mouse(True)  # make mouse visible so you can configure settings
+                elif event.key == pygame.K_h and event.mod & pygame.KMOD_CTRL:
+                    if self.state == 'main':
+                        self.history_renderer.re_render()
+                        self.state = 'history'
+                    else:
+                        self.state = 'main'
 
         if self.state == 'main':
             self.timer.update(events)
         elif self.state == 'settings':
             self.settings_renderer.update(events)
+        elif self.state == 'history':
+            self.history_renderer.update(events)
         else:
             assert False, f"unknown state '{self.state}'"
 
@@ -145,6 +155,8 @@ class Game:
             self.draw_main(screen)
         elif self.state == 'settings':
             self.settings_renderer.draw(screen)
+        elif self.state == 'history':
+            self.history_renderer.draw(screen)
         else:
             assert False, f"unknown state '{self.state}'"
 
