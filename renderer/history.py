@@ -49,10 +49,15 @@ class HistoryRenderer:
 
             times = self.config.times
 
-            cut_off_lists = [times[i:] for i in range(len(times))]
+            # cut_off_lists = [times[i:] for i in range(len(times))]
+            #
+            # for i in range(len(cut_off_lists)):
+            #     if len(cut_off_lists[i]) > stat.amount:
+            #         cut_off_lists[i] = cut_off_lists[i][:stat.amount]
 
-            for i in range(len(cut_off_lists)):
-                cut_off_lists[i] = cut_off_lists[i][:stat.amount]
+            cut_off_lists = []
+            for i in range(len(times) - stat.amount):
+                cut_off_lists.append(times[i:i+stat.amount])
 
             # TODO: fix values that are not valid
 
@@ -60,6 +65,9 @@ class HistoryRenderer:
                 res = calcutils.get_average_of(cut_off_lists[i], stat.amount)
 
                 gs.data.append(res)
+
+            for _ in range(stat.amount):
+                gs.data.append(None)
 
             stats.append(gs)
 
@@ -78,13 +86,11 @@ class HistoryRenderer:
     def draw_graph(self, screen: pygame.Surface, stats: list[GraphStat], rect: tuple[int, int, int, int]):
         ox = rect[0]
         oy = rect[1]
-        old_x = None
-        old_y = None
         width = rect[2]
         height = rect[3]
 
-        longest = max(max(graph_stat.data) for graph_stat in stats)
-        shortest = min(min(graph_stat.data) for graph_stat in stats)
+        longest = max(max(time for time in graph_stat.data if time is not None) for graph_stat in stats)
+        shortest = min(min(time for time in graph_stat.data if time is not None) for graph_stat in stats)
 
         print(longest)
         print(shortest)
@@ -104,7 +110,12 @@ class HistoryRenderer:
         screen.blit(s, (ox - w, oy + y))
 
         for stat in stats:
+            old_x = None
+            old_y = None
             for i, time in enumerate(stat.data):
+                if time is None:
+                    continue
+
                 x = round(i / len(stat.data) * width)
                 y = round((longest - time) / longest * height)
                 if old_y is not None:
