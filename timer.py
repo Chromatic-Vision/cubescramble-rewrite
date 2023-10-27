@@ -187,7 +187,8 @@ class Timer:
 class TimeStats:
 
     def __init__(self):
-        self.stats = [TimeStats.Stat("ao", 5), TimeStats.Stat("ao", 12)]
+        self.stats = [TimeStats.Stat("ao", 5),
+                      TimeStats.Stat("ao", 12)]
 
     class Stat:
 

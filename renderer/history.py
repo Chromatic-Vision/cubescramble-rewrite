@@ -1,6 +1,16 @@
 import pygame
+import random
+import calcutils
 import game
 from config import Config
+
+
+class GraphStat:
+
+    def __init__(self, name: str, color, data: list):
+        self.name = name
+        self.color = color
+        self.data = data  # data should be always ms in int
 
 
 class HistoryRenderer:
@@ -8,16 +18,55 @@ class HistoryRenderer:
         game: game.Game
         self.config = config
         self.game = game
+        self.color_mappings = [
+            ("ao5", (122, 35, 177)),
+            ("ao12", (34, 155, 64))
+        ]
 
         self.s = pygame.Surface(self.game.screen.get_size())
 
     def re_render(self):
         self.s.fill((0, 0, 0))
         border = 200
+
+        stats = [GraphStat("Single", (112, 255, 255),
+                           self.config.times[
+                           -self.config.history_draw_length if len(
+                               self.config.times) > self.config.history_draw_length else None:
+                           ])]
+
+        for stat in self.game.time_stats.stats:
+
+            gs = GraphStat(f"{stat.type}{stat.amount}", (random.randint(0, 255),
+                                                         random.randint(0, 255),
+                                                         random.randint(0, 255)
+                                                         ), [])
+
+            for key, color in self.color_mappings:
+                if key == gs.name:
+                    gs.color = color
+                    break
+
+            times = self.config.times
+
+            cut_off_lists = [times[i:] for i in range(len(times))]
+
+            for i in range(len(cut_off_lists)):
+                cut_off_lists[i] = cut_off_lists[i][:stat.amount]
+
+            # TODO: fix values that are not valid
+
+            for i in range(len(cut_off_lists)):
+                res = calcutils.get_average_of(cut_off_lists[i], stat.amount)
+
+                gs.data.append(res)
+
+            stats.append(gs)
+
+
+
         self.draw_graph(self.s,
-                        self.config.times[
-                          -self.config.history_draw_length if len(self.config.times) > self.config.history_draw_length else None:
-                        ],
+                        stats,
                         (border, border, self.s.get_width() - border * 2, self.s.get_height() - border * 2))
 
     def update(self, events: list[pygame.event.Event]):
@@ -26,15 +75,19 @@ class HistoryRenderer:
     def draw(self, screen: pygame.Surface):
         screen.blit(self.s, (0, 0))
 
-    def draw_graph(self, screen: pygame.Surface, times: list[int], rect: tuple[int, int, int, int]):
+    def draw_graph(self, screen: pygame.Surface, stats: list[GraphStat], rect: tuple[int, int, int, int]):
         ox = rect[0]
         oy = rect[1]
         old_x = None
         old_y = None
         width = rect[2]
         height = rect[3]
-        longest = max(times)
-        shortest = min(times)
+
+        longest = max(max(graph_stat.data) for graph_stat in stats)
+        shortest = min(min(graph_stat.data) for graph_stat in stats)
+
+        print(longest)
+        print(shortest)
 
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox, oy + height), 1)
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox + width, oy), 1)
@@ -50,14 +103,15 @@ class HistoryRenderer:
         w = s.get_width()
         screen.blit(s, (ox - w, oy + y))
 
-        for i, time in enumerate(times):
-            x = round(i / len(times) * width)
-            y = round((longest - time) / longest * height)
-            if old_y is not None:
-                pygame.draw.aaline(screen, (255, 255, 255),
-                                 (ox + old_x, oy + old_y),
-                                 (ox + x, oy + y))
-            # pygame.draw.circle(screen, (255, 255, 255), (ox + x, oy + y), 4)
-            game.draw_antialias_circle(screen, (255, 255, 255), ox + x, oy + y, 4)
-            old_x = x
-            old_y = y
+        for stat in stats:
+            for i, time in enumerate(stat.data):
+                x = round(i / len(stat.data) * width)
+                y = round((longest - time) / longest * height)
+                if old_y is not None:
+                    pygame.draw.aaline(screen, stat.color,
+                                       (ox + old_x, oy + old_y),
+                                       (ox + x, oy + y))
+                # pygame.draw.circle(screen, (255, 255, 255), (ox + x, oy + y), 4)
+                game.draw_antialias_circle(screen, stat.color, ox + x, oy + y, 4)
+                old_x = x
+                old_y = y
