@@ -110,11 +110,21 @@ class HistoryRenderer:
         gw = self.game.font1.get_height()
 
         for stat in stats:
+
+            best = None
+            worst = None
+
             old_x = None
             old_y = None
             for i, time in enumerate(stat.data):
                 if time is None:
                     continue
+
+                if best is None or time < best:
+                    best = time
+
+                if worst is None or time > worst:
+                    worst = time
 
                 x = round(i / len(stat.data) * width)
                 y = round((longest - time) / longest * height)
@@ -128,7 +138,7 @@ class HistoryRenderer:
                 old_y = y
 
             pygame.draw.rect(screen, stat.color,(ox, ty, gw, gw))
-            s = self.game.font1.render(stat.name, True, (200, 200, 200))
+            s = self.game.font1.render(f"{stat.name} | best: {game.time_str(int(best), long=True)}, worst: {game.time_str(int(worst), long=True)}", True, (200, 200, 200))
             screen.blit(s, (ox + gw + 5, ty))
 
             ty += gw
