@@ -11,6 +11,7 @@ import timer
 from renderer.particle import ParticleRenderer
 from renderer.settings import SettingsRenderer
 from renderer.history import HistoryRenderer
+from renderer.times import TimesManagerRenderer
 
 
 class Game:
@@ -34,6 +35,7 @@ class Game:
         self.particle_renderer = ParticleRenderer(self.screen)
         self.settings_renderer = SettingsRenderer(self.config, self)
         self.history_renderer = HistoryRenderer(self.config, self)
+        self.times_manager_renderer = TimesManagerRenderer(self.config, self)
 
         self.background = None
         self.background_image = None
@@ -140,6 +142,8 @@ class Game:
             self.settings_renderer.update(events)
         elif self.state == 'history':
             self.history_renderer.update(events)
+        elif self.state == 'times':
+            self.times_manager_renderer.update(events)
         else:
             assert False, f"unknown state '{self.state}'"
 
@@ -157,6 +161,8 @@ class Game:
             self.settings_renderer.draw(screen)
         elif self.state == 'history':
             self.history_renderer.draw(screen)
+        elif self.state == 'times':
+            self.times_manager_renderer.draw(screen)
         else:
             assert False, f"unknown state '{self.state}'"
 
