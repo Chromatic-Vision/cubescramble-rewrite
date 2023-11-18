@@ -36,6 +36,9 @@ class TimesManagerRenderer:
                         if sb.button_rect.collidepoint(event.pos):
                             sb.on_click()
 
+            elif event.type == pygame.VIDEORESIZE:
+                self.__init__(self.config, self.game)  # TODO: this seems really stupid
+
         for tb in self.time_buttons:
             tb.update()
 
