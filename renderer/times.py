@@ -15,6 +15,11 @@ class TimesManagerRenderer:
         self.crf_handler = crf.CrfHandler()
 
         self.time_buttons = []
+        self.refresh()
+
+    def refresh(self):
+
+        self.time_buttons = []
 
         ry = 45
 
@@ -23,14 +28,17 @@ class TimesManagerRenderer:
             ry += 55
 
     def draw(self, screen):
-        for tb in self.time_buttons:
-            tb.draw()
+        if not self.time_buttons:
+            self.game.draw_string(self.game.font1, "You don't have any solves completed... yet.", (self.game.screen.get_size()[0] / 2 - self.game.font1.size("You don't have any solves completed... yet.")[0] / 2, self.game.screen.get_size()[1] / 2), (255, 255, 255),
+                                  background_color=None)
+        else:
+            for tb in self.time_buttons:
+                tb.draw()
 
     def update(self, events: list[pygame.event.Event]):
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-
                 for tb in self.time_buttons:
                     for sb in tb.buttons:
                         if sb.button_rect.collidepoint(event.pos):

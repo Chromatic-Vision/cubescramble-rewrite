@@ -7,6 +7,7 @@ import math
 
 import assets.scrambler.clock
 import config
+import crf
 import timer
 from renderer.particle import ParticleRenderer
 from renderer.settings import SettingsRenderer
@@ -23,6 +24,8 @@ class Game:
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
+
+        initcheck()
 
         self.timer = timer.Timer(self)
         self.time_stats = timer.TimeStats()
@@ -133,6 +136,13 @@ class Game:
                         self.history_renderer.re_render()
                         self.state = 'history'
                     else:
+                        self.state = 'main'
+                elif event.key == pygame.K_t and event.mod & pygame.KMOD_CTRL:
+                    if self.state == 'main':
+                        self.times_manager_renderer.refresh()
+                        self.state = 'times'
+                    else:
+                        self.timer.refresh_stats()
                         self.state = 'main'
 
         if self.state == 'main':
@@ -382,3 +392,6 @@ def draw_aa_pie(surface, color, from_, to, radius):
     ]
     pygame.gfxdraw.filled_trigon(*args)
     pygame.gfxdraw.aatrigon(*args)
+
+def initcheck():
+    crf.CrfHandler().check_file()

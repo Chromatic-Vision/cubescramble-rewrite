@@ -33,10 +33,10 @@ class HistoryRenderer:
         border = 200
 
         stats = [GraphStat("single", (112, 255, 255),
-                           [casted_times.get_real_time() for casted_times in times[
+                           [casted_times.get_time_including_penalty() for casted_times in times[
                            -self.config.history_draw_length if len(
                                times) > self.config.history_draw_length else None:
-                           ]])]
+                                                                                          ]])]
 
         for stat in self.game.time_stats.stats:
 

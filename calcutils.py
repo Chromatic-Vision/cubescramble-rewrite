@@ -18,15 +18,19 @@ def get_average_of(times_: list[crf.Result], length) -> int:
 
     dnf_count = 0
 
-    for result in times:
-        if result.penalty == "DNF":
+    for time in times:
+        if time.penalty == "DNF":
             dnf_count += 1
 
-    if dnf_count > 2:
+    if dnf_count >= 2:
         return -2
 
-    times.remove(min(times, key=lambda result: result.get_real_time()))
-    times.remove(max(times, key=lambda result: result.get_real_time()))
+    if dnf_count == 1: # always True but if something happens that makes possible the smh
+        times = [time for time in times if time.penalty != "DNF"]
+    else:
+        times.remove(max(times, key=lambda result: result.get_time_including_penalty()))
 
-    total_sum = sum(result.get_real_time() for result in times)
+    times.remove(min(times, key=lambda result: result.get_time_including_penalty()))
+
+    total_sum = sum(result.get_time_including_penalty() for result in times)
     return round(total_sum / times.__len__())

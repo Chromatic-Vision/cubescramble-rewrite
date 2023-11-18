@@ -1,3 +1,4 @@
+import os
 import re
 
 class Result:
@@ -8,14 +9,13 @@ class Result:
         self.scramble = list[2]
         self.penalty = list[3]
 
-    def get_real_time(self):
-        if self.penalty == "DNF":
-            assert False, "not used"
+    def get_time_including_penalty(self):
 
-        if self.penalty == "none":
+        if self.penalty == "none" or self.penalty == "DNF":
             return self.time
 
-        return self.time + int(self.penalty) * 2 * 1000
+        return self.time + int(self.penalty) * 1000
+
 
     def to_string(self):
         res = ""
@@ -55,6 +55,12 @@ class CrfHandler:
     def __init__(self):
         self.working_file = "test.crf"
 
+
+    def check_file(self):
+        if self.working_file not in os.listdir("."):
+            with open(self.working_file, "x") as f:
+                f.close()
+                return
 
     def get_all(self):
 
@@ -113,8 +119,3 @@ class CrfHandler:
         time = int(re.sub(r"[DNF()+]", "", time))
 
         return [index, time, scramble, penalty]
-
-crf = CrfHandler()
-
-crf.get_all()
-
