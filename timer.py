@@ -4,6 +4,7 @@ import time
 import sounddevice
 
 import calcutils
+import crf
 import renderer.particle
 from assets.scrambler import clock
 from assets.stackmat import stackmat
@@ -25,8 +26,6 @@ class Timer:
         self.stackmat = None
         self.error = None
 
-        self.time_history = []
-
         self.event = "clock"
 
         self.clock = clock.Clock()
@@ -34,8 +33,9 @@ class Timer:
 
         self.game = game
 
+        self.crf_handler = crf.CrfHandler()
+
         self.reset(False)
-        # print(sounddevice.query_devices())
 
     def reset(self, run):
 
@@ -103,8 +103,6 @@ class Timer:
 
             if self.stackmat is not None and self.stackmat.state is not None:
 
-                # print(self.stackmat.state.state)
-
                 self.ms = self.stackmat.state.time
                 self.error = None
 
@@ -159,16 +157,16 @@ class Timer:
         self.ready = -1
         self.started_timestamp_spacebar = 0
 
-        self.rescramble()
+        self.crf_handler.write(crf.Result([self.crf_handler.get_index(), self.ms, self.current_scramble, "none"]))
 
-        self.time_history.append(self.ms)
+        self.rescramble()
         self.refresh_stats()
 
         self.game.on_timer_stop()
 
     def refresh_stats(self):
         for stat in self.game.time_stats.stats:
-            stat.refresh(self.time_history)
+            stat.refresh(self.crf_handler.get_all())
 
 
     def get_color(self): # ???
@@ -197,6 +195,6 @@ class TimeStats:
             self.amount = amount
             self.ms = 0
 
-        def refresh(self, times):
+        def refresh(self, times: list[crf.Result]):
             if self.type == "ao":
                 self.ms = calcutils.get_average_of(times, self.amount)

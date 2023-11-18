@@ -1,6 +1,7 @@
 import pygame
 import random
 import calcutils
+import crf
 import game
 from config import Config
 
@@ -24,16 +25,18 @@ class HistoryRenderer:
         ]
 
         self.s = pygame.Surface(self.game.screen.get_size())
+        self.crf_handler = crf.CrfHandler()
 
     def re_render(self):
         self.s.fill((0, 0, 0))
+        times = self.crf_handler.get_all()
         border = 200
 
         stats = [GraphStat("single", (112, 255, 255),
-                           self.config.times[
+                           [casted_times.get_real_time() for casted_times in times[
                            -self.config.history_draw_length if len(
-                               self.config.times) > self.config.history_draw_length else None:
-                           ])]
+                               times) > self.config.history_draw_length else None:
+                           ]])]
 
         for stat in self.game.time_stats.stats:
 
@@ -46,8 +49,6 @@ class HistoryRenderer:
                 if key == gs.name:
                     gs.color = color
                     break
-
-            times = self.config.times
 
             # cut_off_lists = [times[i:] for i in range(len(times))]
             #
@@ -88,6 +89,9 @@ class HistoryRenderer:
         oy = rect[1]
         width = rect[2]
         height = rect[3]
+
+        for f in stats:
+            print(f.data)
 
         longest = max(max(time for time in graph_stat.data if time is not None) for graph_stat in stats)
         shortest = min(min(time for time in graph_stat.data if time is not None) for graph_stat in stats)

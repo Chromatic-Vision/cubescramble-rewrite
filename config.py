@@ -12,7 +12,6 @@ class Config:
     background_local: bool
     background_scale: str
     draw_scramble: bool = True
-    times: List[int] = field(default_factory=list)
     particles: bool = True
     hide_mouse: bool = True
     history_draw_length: int = 1000
@@ -21,8 +20,12 @@ class Config:
         with open('config.json', 'r') as file:
             raw = json.load(file)
         for i in raw:
-            item = self._load(raw[i], self.__annotations__[i])
-            exec(f'self.{i} = item')
+            try:
+                item = self._load(raw[i], self.__annotations__[i])
+                exec(f'self.{i} = item')
+            except KeyError:
+                print(f"Malformed/outdated item '{i}', ignoring...")
+
 
     def _load(self, raw, t):
         if type(raw) == int:

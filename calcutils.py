@@ -1,6 +1,7 @@
+import crf
 
 
-def get_average_of(times_: list[int], length) -> int:
+def get_average_of(times_: list[crf.Result], length) -> int:
 
     # if times_.__len__() < length:
     #     return -1
@@ -15,8 +16,17 @@ def get_average_of(times_: list[int], length) -> int:
     times = times_[:]
     times = times[-length:]
 
-    times.pop(times.index(min(times)))
-    times.pop(times.index(max(times)))
+    dnf_count = 0
 
-    total_sum = sum(times)
+    for result in times:
+        if result.penalty == "DNF":
+            dnf_count += 1
+
+    if dnf_count > 2:
+        return -2
+
+    times.remove(min(times, key=lambda result: result.get_real_time()))
+    times.remove(max(times, key=lambda result: result.get_real_time()))
+
+    total_sum = sum(result.get_real_time() for result in times)
     return round(total_sum / times.__len__())

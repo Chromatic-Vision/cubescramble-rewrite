@@ -116,7 +116,6 @@ class Game:
                         self.background_image = None
                         self.refresh_background()
 
-                        self.timer.time_history = self.config.times
                         self.timer.refresh_stats()
 
                         timer.DEVICE_NUM = self.config.device_num
@@ -313,8 +312,6 @@ class Game:
         self.screen.blit(font.render(text, True, color, background_color), coords)
 
     def save(self):
-        self.config.times = self.timer.time_history
-
         self.config.save()
 
     def load(self):
@@ -322,7 +319,6 @@ class Game:
             self.config.load()
         except FileNotFoundError:
             pass
-        self.timer.time_history = self.config.times
 
         timer.DEVICE_NUM = self.config.device_num
 
@@ -334,6 +330,9 @@ def time_str(time: Union[int, str], long: bool = False) -> str:
 
     if time == -1:
         return "-"
+
+    if time == -2:
+        return "DNF"
 
     seconds = time // 1000 % 60
     out = ''
