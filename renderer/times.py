@@ -21,7 +21,7 @@ class TimesManagerRenderer:
 
         self.time_buttons = []
 
-        ry = 45
+        ry = 45 + 25
 
         for time in self.crf_handler.get_all()[::-1]:
             self.time_buttons.append(TimesManagerRenderer.TimeButton(10, ry, time, self.game))
@@ -32,6 +32,9 @@ class TimesManagerRenderer:
             self.game.draw_string(self.game.font1, "You don't have any solves completed... yet.", (self.game.screen.get_size()[0] / 2 - self.game.font1.size("You don't have any solves completed... yet.")[0] / 2, self.game.screen.get_size()[1] / 2), (255, 255, 255),
                                   background_color=None)
         else:
+
+            self.game.draw_string(self.game.font1, "Time list", (30, 25), (255, 255, 255), background_color=None)
+
             for tb in self.time_buttons:
                 tb.draw()
 

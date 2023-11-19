@@ -11,8 +11,11 @@ class Result:
 
     def get_time_including_penalty(self):
 
-        if self.penalty == "none" or self.penalty == "DNF":
+        if self.penalty == "none":
             return self.time
+
+        if self.penalty == "DNF":
+            return -2
 
         return self.time + int(self.penalty) * 1000
 

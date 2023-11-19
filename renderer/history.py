@@ -90,11 +90,39 @@ class HistoryRenderer:
         width = rect[2]
         height = rect[3]
 
-        for f in stats:
-            print(f.data)
+        filtered_stats = stats[:]
 
-        longest = max(max(time for time in graph_stat.data if time is not None) for graph_stat in stats)
-        shortest = min(min(time for time in graph_stat.data if time is not None) for graph_stat in stats)
+        for i in range(len(stats)):
+
+            stat = stats[i]
+
+            nonequivalent = 0
+
+            for data in stat.data:
+                if data is not None and data != -2:
+                    nonequivalent += 1
+
+            if nonequivalent <= 0:
+                filtered_stats.remove(stat)
+
+        longest = None
+        shortest = None
+
+        for stat in filtered_stats:
+
+            for data in stat.data:
+
+                if data is None or data == -2:
+                    continue
+
+                if longest is None or data > longest:
+                    longest = data
+
+                if shortest is None or data < shortest:
+                    shortest = data
+
+        # longest = max(max(time for time in graph_stat.data if time is not None) for graph_stat in stats)
+        # shortest = min(min(time for time in graph_stat.data if time is not None) for graph_stat in stats)
 
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox, oy + height), 1)
         pygame.draw.line(screen, (200, 200, 200), (ox, oy), (ox + width, oy), 1)
@@ -113,22 +141,25 @@ class HistoryRenderer:
         ty = oy + height + 15
         gw = self.game.font1.get_height()
 
-        for stat in stats:
+        for stat in filtered_stats:
 
-            best = None
+            best = -2
             worst = None
 
             old_x = None
             old_y = None
+
             for i, time in enumerate(stat.data):
                 if time is None:
                     continue
 
-                if best is None or time < best:
-                    best = time
-
                 if worst is None or time > worst:
                     worst = time
+                    if time == -2:
+                        continue
+
+                if (best == -2 or time < best) and time != -2: # time should always NOT be -2, but in case this happens it blocks
+                    best = time
 
                 x = round(i / len(stat.data) * width)
                 y = round((longest - time) / longest * height)
@@ -146,5 +177,8 @@ class HistoryRenderer:
             screen.blit(s, (ox + gw + 5, ty))
 
             ty += gw
+
+        s = self.game.font1.render("DNF in worst results are excluded.", True, (255, 255, 255))
+        screen.blit(s, (ox + gw + 5, ty + 20))
 
 
