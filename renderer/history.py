@@ -150,6 +150,7 @@ class HistoryRenderer:
             old_y = None
 
             for i, time in enumerate(stat.data):
+
                 if time is None:
                     continue
 
@@ -160,6 +161,9 @@ class HistoryRenderer:
 
                 if (best == -2 or time < best) and time != -2: # time should always NOT be -2, but in case this happens it blocks
                     best = time
+
+                if time == -2: # stop rendering DNF
+                    continue
 
                 x = round(i / len(stat.data) * width)
                 y = round((longest - time) / longest * height)
@@ -172,7 +176,7 @@ class HistoryRenderer:
                 old_x = x
                 old_y = y
 
-            pygame.draw.rect(screen, stat.color,(ox, ty, gw, gw))
+            pygame.draw.rect(screen, stat.color, (ox, ty, gw, gw))
             s = self.game.font1.render(f"{stat.name} | best: {game.time_str(int(best), long=True)}, worst: {game.time_str(int(worst), long=True)}", True, (200, 200, 200))
             screen.blit(s, (ox + gw + 5, ty))
 
