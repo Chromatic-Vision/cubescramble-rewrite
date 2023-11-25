@@ -2,6 +2,8 @@ import webbrowser
 
 import pygame
 import sounddevice
+
+import game
 from renderer import button
 
 from config import Config
@@ -114,6 +116,7 @@ class SettingsRenderer:
 
     def switch_to_times_gui(self):
         self.game.state = "times"
+        game.update_mouse(True)
 
     class SettingsButton:
 

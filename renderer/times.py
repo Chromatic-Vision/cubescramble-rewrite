@@ -83,7 +83,7 @@ class TimesManagerRenderer:
             self.crf_handler.update_line(self.time)
 
 
-        def draw(self):
+        def draw(self): # TODO: scramble length fix
 
             if self.time.penalty.isdigit():
                 formatted_time_including_penalties = f"{game.time_str(self.time.time, long=True)}" + (int(int(self.time.penalty) / 2) * "+") + " "
@@ -93,6 +93,9 @@ class TimesManagerRenderer:
                 formatted_time_including_penalties = f"{game.time_str(self.time.time, long=True)}"
 
             dstr = formatted_time_including_penalties + " >> " + self.time.to_string().split(" ", 2)[2]
+
+
+            # self.game.draw_string(self.game.font1, f"{self.time.index}. {dstr}", (self.x + 20, self.y + 7))
 
             self.game.draw_string(self.game.font1, dstr, (self.x + 20, self.y + 7))
 

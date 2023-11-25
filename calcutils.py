@@ -25,7 +25,7 @@ def get_average_of(times_: list[crf.Result], length) -> int:
     if dnf_count >= 2:
         return -2
 
-    if dnf_count == 1: # always True but if something happens that makes possible the smh
+    if dnf_count == 1: # always True but if something happens that makes possible smh
         times = [time for time in times if time.penalty != "DNF"]
     else:
         times.remove(max(times, key=lambda result: result.get_time_including_penalty()))

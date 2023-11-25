@@ -141,8 +141,10 @@ class Game:
                     if self.state == 'main':
                         self.times_manager_renderer.refresh()
                         self.state = 'times'
+                        update_mouse(True)
                     else:
                         self.timer.refresh_stats()
+                        update_mouse(not self.config.hide_mouse)
                         self.state = 'main'
 
         if self.state == 'main':
