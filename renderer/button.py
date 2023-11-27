@@ -36,5 +36,16 @@ class SimpleButton:
         else:
             self.state = "normal"
 
+    def update_pos(self, x, y):
+
+        if x is not None:
+            self.x = x
+            self.button_rect.x = x
+
+        if y is not None:
+            self.y = y
+            self.button_rect.y = y
+
+
     def on_click(self):
         self.action()

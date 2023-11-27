@@ -16,16 +16,19 @@ class TimesManagerRenderer:
 
         self.time_buttons = []
         self.refresh()
+        self.ry = 45 + 25
+        self.gy = 25
 
     def refresh(self):
 
         self.time_buttons = []
 
-        ry = 45 + 25
+        self.gy = 25
+        self.ry = 45 + 25
 
         for time in self.crf_handler.get_all()[::-1]:
-            self.time_buttons.append(TimesManagerRenderer.TimeButton(10, ry, time, self.game))
-            ry += 55
+            self.time_buttons.append(TimesManagerRenderer.TimeButton(10, self.ry, time, self.game))
+            self.ry += 55
 
     def draw(self, screen):
         if not self.time_buttons:
@@ -33,12 +36,14 @@ class TimesManagerRenderer:
                                   background_color=None)
         else:
 
-            self.game.draw_string(self.game.font1, "Time list", (30, 25), (255, 255, 255), background_color=None)
+            self.game.draw_string(self.game.font1, "Time list", (30, self.gy), (255, 255, 255), background_color=None)
 
             for tb in self.time_buttons:
                 tb.draw()
 
     def update(self, events: list[pygame.event.Event]):
+
+        # print(self.gy)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -46,6 +51,29 @@ class TimesManagerRenderer:
                     for sb in tb.buttons:
                         if sb.button_rect.collidepoint(event.pos):
                             sb.on_click()
+
+            elif event.type == pygame.MOUSEWHEEL:
+
+                if event.y < 0:
+
+                    y = event.y * 5
+
+                    for tb in self.time_buttons:
+                        tb.y += y
+                        tb.update_pos()
+
+                    self.gy += y
+
+                elif event.y > 0:
+
+                    y = event.y * 5
+
+                    for tb in self.time_buttons:
+
+                        tb.y += y
+                        tb.update_pos()
+
+                    self.gy += y
 
             elif event.type == pygame.VIDEORESIZE:
                 self.__init__(self.config, self.game)  # TODO: this seems really stupid
@@ -105,3 +133,7 @@ class TimesManagerRenderer:
         def update(self):
             for b in self.buttons:
                 b.update_state()
+
+        def update_pos(self):
+            for b in self.buttons:
+                b.update_pos(None, self.y)
