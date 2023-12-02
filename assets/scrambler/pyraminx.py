@@ -286,26 +286,26 @@ class Pyraminx:
 
     def move(self, notation):
 
+        copy_sides = self.sides.copy()
+
         if notation == "U":
 
             lmap = MoveMappings.U.value
             print(str(lmap))
-
-            copy_sides = self.sides.copy()
 
             for i in range(len(self.sides)):
 
                 instructions = lmap[i]
                 print("instructions:", instructions)
 
-                side = self.sides[i]
-                print("current side color:", side.color)
+                real_side = self.sides[i]
+                print("current side color:", real_side.color)
                 print("ALL ORIGINS:")
 
                 for l in copy_sides:
                     print(l.piece_side)
 
-                for j in range(len(side.piece_side)):
+                for j in range(len(real_side.piece_side)):
 
                     origin_color = instructions[j]
 
@@ -316,12 +316,10 @@ class Pyraminx:
 
                     origin_side = copy_sides[origin_color]
                     print("origin, unchangeable", origin_side.piece_side)
-                    print("real:", side.piece_side)
+                    print("real:", real_side.piece_side)
 
-                    origin_piece = origin_side.piece_side[j]
-
-                    print(f"setting piece {j} with value {side.piece_side[j]} to {origin_piece}")
-                    side.piece_side[j] = origin_piece
+                    print(f"setting piece {j} with value {real_side.piece_side[j]} to {origin_side.piece_side[j]}")
+                    real_side.piece_side[j] = origin_side.piece_side[j]
 
 
 if __name__ == "__main__":
