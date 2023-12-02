@@ -284,9 +284,10 @@ class Pyraminx:
         for side in self.sides:
             side.reset()
 
-    def move(self, notation):
+    def move(self, notation): # execuse me???????????????????????????????????????????????
 
         copy_sides = self.sides.copy()
+        d = copy_sides.copy()
 
         if notation == "U":
 
@@ -296,20 +297,21 @@ class Pyraminx:
             for i in range(len(self.sides)):
 
                 instructions = lmap[i]
-                print("instructions:", instructions)
+                print("instructions:", instructions) # for each side, get instructions how to turn
 
                 real_side = self.sides[i]
                 print("current side color:", real_side.color)
-                print("ALL ORIGINS:")
+
+                print("I'm a copy of a object, so I won't change value:")
 
                 for l in copy_sides:
                     print(l.piece_side)
 
-                for j in range(len(real_side.piece_side)):
+                for j in range(len(real_side.piece_side)): # for every piece, copy the value
 
                     origin_color = instructions[j]
 
-                    print(f"Color is now {origin_color}")
+                    print(f"Copying from side with color {origin_color}")
 
                     if origin_color == -1:
                         continue
@@ -318,8 +320,12 @@ class Pyraminx:
                     print("origin, unchangeable", origin_side.piece_side)
                     print("real:", real_side.piece_side)
 
+                    r = origin_side.piece_side[j]
+
                     print(f"setting piece {j} with value {real_side.piece_side[j]} to {origin_side.piece_side[j]}")
-                    real_side.piece_side[j] = origin_side.piece_side[j]
+                    real_side.piece_side[j] = r
+
+                    print("SAME: ", copy_sides == d)
 
 
 if __name__ == "__main__":
