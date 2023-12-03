@@ -1,12 +1,9 @@
 import pygame
 import time
 
-import sounddevice
-
 import calcutils
 import crf
-import renderer.particle
-from assets.scrambler import clock
+from assets.scrambler import clock, pyraminx
 from assets.stackmat import stackmat
 
 DEVICE_NUM = 30
@@ -15,6 +12,7 @@ DEVICE_NUM = 30
 class Timer:
 
     def __init__(self, game):
+
         self.started_timestamp = time.time_ns()
         self.running = False
         self.ms = 0
@@ -26,12 +24,15 @@ class Timer:
         self.stackmat = None
         self.error = None
 
-        self.event = "clock"
+        self.game = game
+
+        self.current_scramble = ""
+        self.event = self.game.config.current_event
 
         self.clock = clock.Clock()
-        self.rescramble()
+        self.pyraminx = pyraminx.Pyraminx()
 
-        self.game = game
+        self.rescramble()
 
         self.crf_handler = crf.CrfHandler()
 
@@ -173,13 +174,16 @@ class Timer:
         pass
 
     def rescramble(self):
+
         if self.event == "clock":
             self.current_scramble = clock.get_scramble()
-            # self.clock = clock.Clock()
             self.clock.reset()
             self.clock.convert_scramble(self.current_scramble)
-        else:
-            self.current_scramble = f"No scrambler for event {self.event} yet!"
+
+        elif self.event == "pyraminx":
+            self.current_scramble = pyraminx.get_scramble()
+            self.pyraminx.reset_puzzle()
+            self.pyraminx.convert_scramble(self.current_scramble)
 
 
 class TimeStats:

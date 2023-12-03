@@ -27,13 +27,13 @@ class Game:
 
         initcheck()
 
-        self.timer = timer.Timer(self)
-        self.time_stats = timer.TimeStats()
-
         self.state = 'main'
 
-        self.config = config.Config(1, "example.png", True, 'true')
+        self.config = config.Config(1, "example.png", True, 'true', 'clock')
         self.load()
+
+        self.timer = timer.Timer(self)
+        self.time_stats = timer.TimeStats()
 
         self.particle_renderer = ParticleRenderer(self.screen)
         self.settings_renderer = SettingsRenderer(self.config, self)
@@ -122,6 +122,8 @@ class Game:
                         self.timer.refresh_stats()
 
                         timer.DEVICE_NUM = self.config.device_num
+                        self.timer.event = self.config.current_event
+                        self.timer.rescramble()
                         self.timer.reset(False)  # update DEVICE_NUM of stackmat timer
 
                         update_mouse(not self.config.hide_mouse)  # update mouse after done with settings
@@ -207,6 +209,7 @@ class Game:
             # draw scramble
             if self.config.draw_scramble:
                 # TODO: make scrambler responsible for drawing itself
+                # TODO: render pyraminx
 
                 if self.timer.event == "clock":
 

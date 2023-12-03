@@ -11,6 +11,7 @@ class Config:
     background_url: str
     background_local: bool
     background_scale: str
+    current_event: str
     draw_scramble: bool = True
     particles: bool = True
     hide_mouse: bool = True
