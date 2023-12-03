@@ -1,4 +1,6 @@
 import random
+import copy
+
 from enum import Enum
 
 moves = ["L", "R", "B", "U"]
@@ -73,189 +75,374 @@ PIECE_SIDES = 9
 
 class MoveMappings(Enum):
 
-    L = [ # index 0 = GREEN, 1 = RED, BLUE = 2, YELLOW = 3
+    L = [ # index 0 = GREEN, 1 = RED, BLUE = 2, YELLOW = 3, (COLOR_FROM, ORIGIN_INDEX)
         [
-            -1,
-            1, -1, -1,
-            1, 1, 1, -1, -1 # Here it indicates that 4 pieces on the left side from red side will move to the green side. -1 means it won't move.
+            None,
+            (1, 6), None, None,
+            (1, 8), (1, 7), (1, 3), None, None
         ],
         [
-            -1,
-            -1, -1, 3,
-            -1, -1, 3, 3, 3
+            None,
+            None, None, (3, 3),
+            None, None, (3, 6), (3, 7), (3, 8)
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            -1, -1, 0,
-            -1, -1, 0, 0, 0 # Yellow is a little bit weird because we flip the shape here...
+            None,
+            None, None, (0, 6),
+            None, None, (0, 1), (0, 5), (0, 4) # Yellow is a little bit weird because we flip the shape here...
         ]
     ]
 
     L_PRIME = [
         [
-            -1,
-            3, -1, -1,
-            3, 3, 3, -1, -1
+            None,
+            (3, 6), None, None,
+            (3, 8), (3, 7), (3, 3), None, None
         ],
         [
-            -1,
-            -1, -1, 0,
-            -1, -1, 0, 0, 0
+            None,
+            None, None, (0, 6),
+            None, None, (0, 1), (0, 5), (0, 4)
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            -1, -1, 1,
-            -1, -1, 1, 1, 1
+            None,
+            None, None, (1, 3),
+            None, None, (1, 6), (1, 7), (1, 8)
         ]
     ]
 
     R = [
         [
-            -1,
-            -1, -1, 3,
-            -1, -1, 3, 3, 3
+            None,
+            None, None, (3, 6),
+            None, None, (3, 1), (3, 5), (3, 4)
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            0, -1, -1,
-            0, 0, 0, -1, -1
+            None,
+            (0, 6), None, None,
+            (0, 8), (0, 7), (0, 3), None, None
         ],
         [
-            -1,
-            2, -1, 1,
-            2, 2, 2, 1, 1
+            None,
+            (2, 1), None, None,
+            (2, 4), (2, 5), (2, 6), None, None
         ]
     ]
 
     R_PRIME = [
         [
-            -1,
-            -1, -1, 2,
-            -1, -1, 2, 2, 2
+            None,
+            None, None, (2, 6),
+            None, None, (2, 1), (2, 5), (2, 4)
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            3, -1, -1,
-            3, 3, 3, -1, -1
+            None,
+            (3, 1), None, None,
+            (3, 4), (3, 5), (3, 6), None, None
         ],
         [
-            -1,
-            0, -1, 1,
-            0, 0, 0, 1, 1
+            None,
+            (0, 6), None, None,
+            (0, 8), (0, 7), (0, 3), None, None
         ]
     ]
 
     B = [
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            2, -1, -1,
-            2, 2, 2, -1, -1
+            None,
+            (2, 6), None, None,
+            (2, 8), (2, 7), (2, 3), None, None
         ],
         [
-            -1,
-            -1, -1, 3,
-            -1, -1, 3, 3, 3
+            None,
+            None, None, (3, 1),
+            None, None, (3, 3), (3, 2), (3, 0)
         ],
         [
-            1,
-            1, 1, 1,
-            -1, -1, -1, -1, -1
+            (1, 4),
+            (1, 6), (1, 5), (1, 1),
+            None, None, None, None, None
         ]
     ]
 
     B_PRIME = [
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ],
         [
-            -1,
-            3, -1, -1,
-            3, 3, 3, -1, -1
+            None,
+            (3, 3), None, None,
+            (3, 0), (3, 2), (3, 1), None, None
         ],
         [
-            -1,
-            -1, -1, 1,
-            -1, -1, 1, 1, 1
+            None,
+            None, None, (1, 6),
+            None, None, (1, 1), (1, 5), (1, 4)
         ],
         [
-            2,
-            2, 2, 2,
-            -1, -1, -1, -1, -1
+            (2, 8),
+            (2, 3), (2, 7), (2, 6),
+            None, None, None, None, None
         ]
     ]
 
     U = [
         [
-            2,
-            2, 2, 2,
-            -1, -1, -1, -1, -1
+            (2, 0),
+            (2, 1), (2, 2), (2, 3),
+            None, None, None, None, None
         ],
         [
-            0,
-            0, 0, 0,
-            -1, -1, -1, -1, -1
+            (0, 0),
+            (0, 1), (0, 2), (0, 3),
+            None, None, None, None, None
         ],
         [
-            1,
-            1, 1, 1,
-            -1, -1, -1, -1, -1
+            (1, 0),
+            (1, 1), (1, 2), (1, 3),
+            None, None, None, None, None
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ]
     ]
 
     U_PRIME = [
         [
-            1,
-            1, 1, 1,
-            -1, -1, -1, -1, -1
+            (1, 0),
+            (1, 1), (1, 2), (1, 3),
+            None, None, None, None, None
         ],
         [
-            2,
-            2, 2, 2,
-            -1, -1, -1, -1, -1
+            (2, 0),
+            (2, 1), (2, 2), (2, 3),
+            None, None, None, None, None
         ],
         [
-            0,
-            0, 0, 0,
-            -1, -1, -1, -1, -1
+            (0, 0),
+            (0, 1), (0, 2), (0, 3),
+            None, None, None, None, None
         ],
         [
-            -1,
-            -1, -1, -1,
-            -1, -1, -1, -1, -1
+            None,
+            None, None, None,
+            None, None, None, None, None
         ]
     ]
+
+    L_TIP = [
+        [
+            None,
+            None, None, None,
+            (1, 8), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (3, 8)
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (0, 4)
+        ]
+    ]
+
+    L_TIP_PRIME = [
+        [
+            None,
+            None, None, None,
+            (3, 8), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (0, 4)
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (1, 8)
+        ]
+    ]
+
+    R_TIP = [
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (3, 4)
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (0, 8), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (2, 4), None, None, None, None
+        ]
+    ]
+
+    R_TIP_PRIME = [
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (2, 4)
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (3, 4), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (0, 8), None, None, None, None
+        ]
+    ]
+
+    B_TIP = [
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (2, 8), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (3, 0)
+        ],
+        [
+            (1, 3),
+            None, None, None,
+            None, None, None, None, None
+        ]
+    ]
+
+    B_TIP_PRIME = [
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            (3, 0), None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, (1, 4)
+        ],
+        [
+            (2, 8),
+            None, None, None,
+            None, None, None, None, None
+        ]
+    ]
+
+    U_TIP = [
+        [
+            (2, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            (0, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            (1, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ]
+    ]
+
+    U_TIP_PRIME = [
+        [
+            (1, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            (2, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            (0, 0),
+            None, None, None,
+            None, None, None, None, None
+        ],
+        [
+            None,
+            None, None, None,
+            None, None, None, None, None
+        ]
+    ]
+
 
 class ColorSide:
 
@@ -270,6 +457,18 @@ class ColorSide:
         for i in range(PIECE_SIDES):
             self.piece_side.append(self.color)
 
+def convert_normal_notation_to_mapping_enum_name(notation: str): # I couldn't think of another name for this
+
+    base = get_base_of_move(notation)
+
+    if notation[0].islower():
+        base = base.capitalize()
+        base += "_TIP"
+
+    if notation.count("'") > 0:
+        base += "_PRIME"
+
+    return base
 
 class Pyraminx:
 
@@ -281,63 +480,52 @@ class Pyraminx:
             ColorSide(Color.YELLOW)
         ]
 
+        self.reset_puzzle()
+
+    def reset_puzzle(self):
         for side in self.sides:
             side.reset()
 
-    def move(self, notation): # execuse me???????????????????????????????????????????????
+    def convert_scramble(self, scramble: str):
 
-        copy_sides = self.sides.copy()
-        d = copy_sides.copy()
+        blocks = scramble.split(" ")
 
-        if notation == "U":
+        for block in blocks:
+            self.move(block)
 
-            lmap = MoveMappings.U.value
-            print(str(lmap))
 
-            for i in range(len(self.sides)):
+    def move(self, notation: str):
 
-                instructions = lmap[i]
-                print("instructions:", instructions) # for each side, get instructions how to turn
+        copy_sides = copy.deepcopy(self.sides) # this took way to long to figure out...
+        move_mapping = MoveMappings.__getitem__(convert_normal_notation_to_mapping_enum_name(notation)).value
 
-                real_side = self.sides[i]
-                print("current side color:", real_side.color)
+        for i in range(len(self.sides)):
 
-                print("I'm a copy of a object, so I won't change value:")
+            instructions = move_mapping[i]
 
-                for l in copy_sides:
-                    print(l.piece_side)
+            side = self.sides[i]
 
-                for j in range(len(real_side.piece_side)): # for every piece, copy the value
+            for j in range(len(side.piece_side)):
 
-                    origin_color = instructions[j]
+                if instructions[j] is None:
+                    continue
 
-                    print(f"Copying from side with color {origin_color}")
+                origin_color = instructions[j][0]
+                origin_piece = instructions[j][1]
 
-                    if origin_color == -1:
-                        continue
+                origin_side = copy_sides[origin_color]
 
-                    origin_side = copy_sides[origin_color]
-                    print("origin, unchangeable", origin_side.piece_side)
-                    print("real:", real_side.piece_side)
-
-                    r = origin_side.piece_side[j]
-
-                    print(f"setting piece {j} with value {real_side.piece_side[j]} to {origin_side.piece_side[j]}")
-                    real_side.piece_side[j] = r
-
-                    print("SAME: ", copy_sides == d)
+                side.piece_side[j] = origin_side.piece_side[origin_piece]
 
 
 if __name__ == "__main__":
-    # for _ in range(5):
-    #     print(get_scramble())
 
     pm = Pyraminx()
-    for n, s in enumerate(pm.sides):
-        print(s.piece_side, n)
-    print("<<b")
-    pm.move("U")
-    print("moved;")
-    for n, s in enumerate(pm.sides):
-        print(s.piece_side, n)
-    print("<<p")
+
+    a = get_scramble()
+    print(a)
+
+    pm.convert_scramble(a)
+
+    for nb in pm.sides:
+        print(nb.piece_side)
