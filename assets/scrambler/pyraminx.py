@@ -1,5 +1,6 @@
 import random
 import copy
+import math
 
 from enum import Enum
 
@@ -518,6 +519,51 @@ class Pyraminx:
                 side.piece_side[j] = origin_side.piece_side[origin_piece]
 
 
+def _get_line_middle_coords(line: list[list[int]]):
+    # top, right, left
+    top_to_right_angle = math.atan2(line[0][0] - line[1][0], line[0][1] - line[1][1])
+    print(top_to_right_angle)
+    dist = math.sqrt((line[0][0] - line[1][0]) ** 2 + (line[0][1] - line[1][1]) ** 2)
+    new_dist = dist / 2
+    print(dist, new_dist)
+
+    new_coord = [
+        line[0][0] + math.sin(dist) * new_dist,
+        line[0][1] + math.cos(dist) * new_dist
+    ]
+    print(new_coord)
+    return new_coord
+
+def _get_tri_sub(tri: list[list[int]]) -> list[list[list[float]]]:
+    middles = [_get_line_middle_coords(line) for line in [[tri[i % 3], tri[(i + 1) % 3]] for i in range(3)]]
+
+    # A31
+    # C32
+    # B12
+    return [
+        [
+            tri[0],
+            middles[2],
+            middles[0]
+        ],
+        [
+            tri[2],
+            middles[2],
+            middles[1]
+        ],
+        [
+            tri[1],
+            middles[0],
+            middles[1]
+        ]
+    ]
+
+def piraminx_triangles(flipped: bool) -> list[list[list[int]]]:
+    tri = [[0, 0], [1, 1], [-1, 1]]
+    tri = _get_line_middle_coords(tri)
+    tri = _get_line_middle_coords(tri)
+
+
 if __name__ == "__main__":
 
     pm = Pyraminx()
@@ -529,3 +575,6 @@ if __name__ == "__main__":
 
     for nb in pm.sides:
         print(nb.piece_side)
+
+    print(_get_line_middle_coords([[0, 0], [1, 1], [-1, 1]]))
+    print(_get_tri_sub([[0, 0], [1, 1], [-1, 1]]))

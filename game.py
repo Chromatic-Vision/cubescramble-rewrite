@@ -3,7 +3,7 @@ import pygame
 import pygame.gfxdraw
 import requests
 import io
-import math
+from math import sin, cos, radians, atan2, pi
 
 import assets.scrambler.clock
 import config
@@ -241,15 +241,15 @@ class Game:
                         for j in range(12):
                             pointer_color = tuple(min(color[i] + 30, 255) for i in range(3))
                             draw_antialias_circle(screen, pointer_color,
-                                                  x + math.sin(j * (math.pi / 6)) * (clock_radius + dot_radius * 0),
-                                                  y + math.cos(j * (math.pi / 6)) * (clock_radius + dot_radius * 0),
+                                                  x + sin(j * (pi / 6)) * (clock_radius + dot_radius * 0),
+                                                  y + cos(j * (pi / 6)) * (clock_radius + dot_radius * 0),
                                                   dot_radius)
 
                         draw_antialias_circle(screen, color, x, y, clock_radius)
 
                         draw_aa_pie(screen, (255, 255, 255), (x, y),
-                                    (x + math.sin(state * (math.pi / 6)) * clock_radius,
-                                     y + math.cos(state * (math.pi / 6)) * clock_radius), 3)
+                                    (x + sin(state * (pi / 6)) * clock_radius,
+                                     y + cos(state * (pi / 6)) * clock_radius), 3)
 
                     # for i, state in enumerate(self.timer.clock.back.states):
                     #     draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
@@ -275,6 +275,14 @@ class Game:
                             color = (255, 255, 0)
 
                         draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28 + 194, i // 2 * 55 + fy + 28, 9)
+
+                elif self.timer.event == "pyraminx":
+
+                    x = self.screen.get_size()[0] - 500
+                    y = self.screen.get_size()[1] - 250
+
+                    # background
+                    pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 500, y + 250))
 
 
             # time stats
@@ -383,20 +391,21 @@ def draw_antialias_circle(surface, color, x, y, radius):
 def draw_aa_pie(surface, color, from_, to, radius):
     draw_antialias_circle(surface, color, from_[0], from_[1], radius)
 
-    direction = math.atan2(from_[0] - to[0], from_[1] - to[1])
+    direction = atan2(from_[0] - to[0], from_[1] - to[1])
 
     args = [
         surface,
-        round(from_[0] + math.sin(direction + math.pi / 2) * radius),
-        round(from_[1] + math.cos(direction + math.pi / 2) * radius),
+        round(from_[0] + sin(direction + pi / 2) * radius),
+        round(from_[1] + cos(direction + pi / 2) * radius),
 
-        round(from_[0] + math.sin(direction - math.pi / 2) * radius),
-        round(from_[1] + math.cos(direction - math.pi / 2) * radius),
+        round(from_[0] + sin(direction - pi / 2) * radius),
+        round(from_[1] + cos(direction - pi / 2) * radius),
 
         round(to[0]), round(to[1]), color
     ]
     pygame.gfxdraw.filled_trigon(*args)
     pygame.gfxdraw.aatrigon(*args)
+
 
 def initcheck():
     crf.CrfHandler().check_file()
