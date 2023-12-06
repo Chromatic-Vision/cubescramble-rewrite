@@ -1,9 +1,10 @@
 import pygame
 import time
+from typing import Union
 
 import calcutils
 import crf
-from assets.scrambler import clock, pyraminx
+from assets.puzzles import puzzle, abstract_puzzle
 from assets.stackmat import stackmat
 
 DEVICE_NUM = 30
@@ -27,10 +28,8 @@ class Timer:
         self.game = game
 
         self.current_scramble = ""
-        self.event = self.game.config.current_event
 
-        self.clock = clock.Clock()
-        self.pyraminx = pyraminx.Pyraminx()
+        self.puzzle: abstract_puzzle.AbstractPuzzle = puzzle.load_puzzle(self.game.config.current_event)
 
         self.rescramble()
 
@@ -174,16 +173,9 @@ class Timer:
         pass
 
     def rescramble(self):
-
-        if self.event == "clock":
-            self.current_scramble = clock.get_scramble()
-            self.clock.reset()
-            self.clock.convert_scramble(self.current_scramble)
-
-        elif self.event == "pyraminx":
-            self.current_scramble = pyraminx.get_scramble()
-            self.pyraminx.reset_puzzle()
-            self.pyraminx.convert_scramble(self.current_scramble)
+        self.current_scramble = self.puzzle.scrambler.get_random_scramble()
+        self.puzzle.emulator.reset()
+        self.puzzle.emulator.convert_scramble(self.current_scramble)
 
 
 class TimeStats:

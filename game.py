@@ -5,7 +5,7 @@ import requests
 import io
 from math import sin, cos, radians, atan2, pi
 
-import assets.scrambler.clock
+import assets.puzzles.abstract_puzzle
 import config
 import crf
 import timer
@@ -211,78 +211,14 @@ class Game:
                 # TODO: make scrambler responsible for drawing itself
                 # TODO: render pyraminx
 
-                if self.timer.event == "clock":
+                self.timer.puzzle.renderer.render(self.screen, None)
 
-                    x = self.screen.get_size()[0] - 395
-                    y = self.screen.get_size()[1] - 200
-
-                    # background
-                    pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 400, y + 200))
-
-                    fx = x + 45
-                    fy = y + 45
-
-                    # clocks
-                    clock_radius = 23
-                    dot_radius = 3
-
-                    for i, state in enumerate(self.timer.clock.front.states + self.timer.clock.back.states):
-                        state += 6
-                        state = -state
-                        state = state % 12
-
-                        x, y = i % 3 * 55 + fx, i // 3 * 55 + fy
-                        color = (77, 117, 255)
-                        if i >= 9:
-                            x += 195
-                            y -= 55 * 3
-                            color = (21, 96, 189)
-
-                        for j in range(12):
-                            pointer_color = tuple(min(color[i] + 30, 255) for i in range(3))
-                            draw_antialias_circle(screen, pointer_color,
-                                                  x + sin(j * (pi / 6)) * (clock_radius + dot_radius * 0),
-                                                  y + cos(j * (pi / 6)) * (clock_radius + dot_radius * 0),
-                                                  dot_radius)
-
-                        draw_antialias_circle(screen, color, x, y, clock_radius)
-
-                        draw_aa_pie(screen, (255, 255, 255), (x, y),
-                                    (x + sin(state * (pi / 6)) * clock_radius,
-                                     y + cos(state * (pi / 6)) * clock_radius), 3)
-
-                    # for i, state in enumerate(self.timer.clock.back.states):
-                    #     draw_antialias_circle(screen, (155, 177, 25), i % 3 * 55 + fx + 195, i // 3 * 55 + fy, 23)
-
-                    # pins
-                    front_pins = self.timer.clock.pins
-                    back_pins = assets.scrambler.clock.invert_pins(front_pins)
-
-                    for i in range(front_pins.__len__()):
-
-                        color = (126, 126, 35)
-
-                        if front_pins[i]:
-                            color = (255, 255, 0)
-
-                        draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28, i // 2 * 55 + fy + 28, 9)
-
-                    for i in range(back_pins.__len__()):
-
-                        color = (126, 126, 35)
-
-                        if back_pins[i]:
-                            color = (255, 255, 0)
-
-                        draw_antialias_circle(screen, color, i % 2 * 55 + fx + 28 + 194, i // 2 * 55 + fy + 28, 9)
-
-                elif self.timer.event == "pyraminx":
-
-                    x = self.screen.get_size()[0] - 500
-                    y = self.screen.get_size()[1] - 250
-
-                    # background
-                    pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 500, y + 250))
+                # pyraminx
+                #     x = self.screen.get_size()[0] - 500
+                #     y = self.screen.get_size()[1] - 250
+                #
+                #     # background
+                #     pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 500, y + 250))
 
 
             # time stats
