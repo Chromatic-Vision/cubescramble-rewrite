@@ -3,9 +3,9 @@ import pygame
 import pygame.gfxdraw
 import requests
 import io
-from math import sin, cos, radians, atan2, pi
+from math import sin, cos, atan2, pi
 
-import assets.puzzles.abstract_puzzle
+from assets.puzzles import puzzle, abstract_puzzle
 import config
 import crf
 import timer
@@ -19,8 +19,9 @@ class Game:
 
     def __init__(self):
 
+        _ = pygame.display.set_mode((0, 0))  # weird, windows
         self.screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)  # weird, windows
-        self.screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)  # weird, windows
+        del _
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
@@ -122,7 +123,7 @@ class Game:
                         self.timer.refresh_stats()
 
                         timer.DEVICE_NUM = self.config.device_num
-                        self.timer.event = self.config.current_event
+                        self.timer.refresh_puzzle()
                         self.timer.rescramble()
                         self.timer.reset(False)  # update DEVICE_NUM of stackmat timer
 
@@ -208,18 +209,7 @@ class Game:
 
             # draw scramble
             if self.config.draw_scramble:
-                # TODO: make scrambler responsible for drawing itself
-                # TODO: render pyraminx
-
                 self.timer.puzzle.renderer.render(self.screen, None)
-
-                # pyraminx
-                #     x = self.screen.get_size()[0] - 500
-                #     y = self.screen.get_size()[1] - 250
-                #
-                #     # background
-                #     pygame.draw.rect(screen, (75, 75, 75), (x, y, x + 500, y + 250))
-
 
             # time stats
             reversed_time_stats_list = self.time_stats.stats[::-1]
@@ -259,6 +249,7 @@ class Game:
         End
 
         """
+
 
     def on_timer_start(self):
         self.particle_renderer.clear()

@@ -1,7 +1,5 @@
 import pygame
 import time
-from typing import Union
-
 import calcutils
 import crf
 from assets.puzzles import puzzle, abstract_puzzle
@@ -176,6 +174,9 @@ class Timer:
         self.current_scramble = self.puzzle.scrambler.get_random_scramble()
         self.puzzle.emulator.reset()
         self.puzzle.emulator.convert_scramble(self.current_scramble)
+
+    def refresh_puzzle(self):
+        self.puzzle: abstract_puzzle.AbstractPuzzle = puzzle.load_puzzle(self.game.config.current_event)
 
 
 class TimeStats:

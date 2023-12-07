@@ -422,10 +422,32 @@ class MoveMappings(Enum):
 
 PIECE_SIDES = 9
 
+class Color(Enum):
+
+    GREEN = 0
+    RED = 1
+    BLUE = 2
+    YELLOW = 3
+
+
+def to_color_tuple(color: Color):
+
+    val = color
+
+    if val == Color.GREEN:
+        return 0, 255, 0
+    elif val == Color.RED:
+        return 255, 0, 0
+    elif val == Color.BLUE:
+        return 0, 0, 255
+    elif val == Color.YELLOW:
+        return 255, 255, 0
+    else:
+        raise ValueError("to_color_tuple() argument should be object 'GREEN', 'RED', 'BLUE' or 'YELLOW' inside class Color")
 
 class ColorSide:
 
-    def __init__(self, color: int):
+    def __init__(self, color: Color):
         self.color = color
         self.piece_side = []
 
@@ -434,7 +456,7 @@ class ColorSide:
         self.piece_side = []
 
         for i in range(PIECE_SIDES):
-            self.piece_side.append(self.color)
+            self.piece_side.append(self.color.value)
 
 
 def convert_normal_notation_to_mapping_enum_name(notation: str):  # I couldn't think of another name for this
@@ -457,11 +479,3 @@ def get_base_of_move(move: str):
     res = res.replace("'", "") # remove prime
 
     return res
-
-
-class Color:
-
-    GREEN = 0
-    RED = 1
-    BLUE = 2
-    YELLOW = 3

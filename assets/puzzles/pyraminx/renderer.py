@@ -1,7 +1,8 @@
-import pygame
+import pygame.gfxdraw
 import math
+import copy
 from assets.puzzles.abstract_puzzle_renderer import AbstractPuzzleRenderer
-from assets.puzzles.pyraminx.emulator import PyraminxEmulator
+from assets.puzzles.pyraminx.emulator import PyraminxEmulator, Color, ColorSide, to_color_tuple
 
 
 SCALE = 100
@@ -22,16 +23,75 @@ class PyraminxRenderer(AbstractPuzzleRenderer):
         x += 25
         y += 60
 
-        def draw_side(sx, sy, flipped):
-            tris = piraminx_triangles(flipped)
-            for tri in tris:
-                pygame.draw.polygon(screen, (255, 255, 255),
-                                    [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)], 2)
+        def fix_index_of_tris(tris) -> list: # AAAAAAAAAAAAAA @huu-bo why did you make this so difficult list swapping doesnt work
 
-        draw_side(0, SCALE - BORDER, False)
-        draw_side(SCALE // 2 + BORDER, 100 - BORDER * 2, True)
-        draw_side(SCALE + BORDER * 2, SCALE - BORDER, False)
-        draw_side(SCALE // 2 + BORDER, 0 - BORDER * 3, False)
+            res = copy.deepcopy(tris)
+
+            res[1] = tris[2]
+            res[2] = tris[3]
+            res[3] = tris[1]
+            res[5] = tris[7]
+            res[7] = tris[5]
+            res[6] = tris[8]
+            res[8] = tris[6]
+
+            res[8], res[7] = res[7], res[8]
+
+            return res
+
+
+        def mirror_tris(tris) -> list:
+
+            res = copy.deepcopy(tris)
+
+            res[1] = tris[3]
+            res[3] = tris[1]
+            res[4] = tris[8]
+            res[5] = tris[7]
+            res[7] = tris[5]
+            res[8] = tris[4]
+
+            return res
+
+
+        def draw_side(sx, sy, flipped, side_color: Color):
+
+            tris = piraminx_triangles(flipped)
+            tris = fix_index_of_tris(tris)
+
+            if side_color == Color.YELLOW:
+                tris = mirror_tris(tris)
+
+            for i, tri in enumerate(tris):
+
+                side: ColorSide = self._puzzle.sides[side_color.value]
+
+                piece_color = side.piece_side[i]
+
+                # TODO: fix scuffed outline
+                pygame.draw.polygon(screen, (0, 0, 0),
+                                    [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)], 3)
+
+                pygame.gfxdraw.filled_polygon(screen,
+                                    [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)], to_color_tuple(Color(piece_color)))
+
+                # tx = 0
+                # ty = 0
+                #
+                # for p in [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)]:
+                #     tx += p[0]
+                #     ty += p[1]
+                #
+                # tx /= 3
+                # ty /= 3
+                #
+                # screen.blit(pygame.font.Font("assets/fonts/font1.ttf", 15).render(f"{i}", True, (255, 255, 255)), (tx - 2, ty - 12))
+
+
+        draw_side(0, SCALE - BORDER, False, Color.RED)
+        draw_side(SCALE // 2 + BORDER, 100 - BORDER * 2, True, Color.YELLOW)
+        draw_side(SCALE + BORDER * 2, SCALE - BORDER, False, Color.BLUE)
+        draw_side(SCALE // 2 + BORDER, 0 - BORDER * 3, False, Color.GREEN)
 
 
 def _get_line_middle_coords(line: list[list[float]]):
@@ -119,6 +179,8 @@ def piraminx_triangles(flipped: bool) -> list[Tri]:
         for tri in out:
             for i, coord in enumerate(tri):
                 tri[i][1] = 1 - coord[1]
+
+    # print("out:", out)
 
     return out
 
