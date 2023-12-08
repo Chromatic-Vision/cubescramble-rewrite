@@ -56,7 +56,7 @@ class TimesManagerRenderer:
 
                 if event.y < 0:
 
-                    y = event.y * 5
+                    y = event.y * 10
 
                     for tb in self.time_buttons:
                         tb.y += y
@@ -66,7 +66,7 @@ class TimesManagerRenderer:
 
                 elif event.y > 0:
 
-                    y = event.y * 5
+                    y = event.y * 10
 
                     for tb in self.time_buttons:
 

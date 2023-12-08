@@ -1,9 +1,8 @@
 import webbrowser
-
 import pygame
 import sounddevice
-
 import game
+from assets.puzzles import puzzle
 from renderer import button
 
 from config import Config
@@ -54,6 +53,12 @@ class SettingsRenderer:
 
                         self.selected = b.setting_name
 
+                        if self.selected == "current_event":
+
+                            index = puzzle.PUZZLES.index(self.config.__dict__[self.selected]) + 1
+
+                            self.config.__dict__[self.selected] = puzzle.PUZZLES[index if index < len(puzzle.PUZZLES) else 0]
+
                         if type(eval(f'self.config.{self.selected}')) == bool:
                             self.config.__dict__[self.selected] = not self.config.__dict__[self.selected]
                             self.selected = None
@@ -67,8 +72,19 @@ class SettingsRenderer:
                     continue
 
                 if type(self.config.__dict__[self.selected]) == str:
-                    self.config.__dict__[self.selected] += event.text
+
+                    if not self.selected == "current_event":
+                        self.config.__dict__[self.selected] += event.text
+
             elif event.type == pygame.KEYDOWN:
+
+                # if event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL:
+                #     if self.selected is not None and pygame.scrap.get(pygame.SCRAP_TEXT) is not None:
+                #         if type(self.config.__dict__[self.selected]) == str:
+                #             with open("broken_text.bin", "w") as f:
+                #                 f.write(pygame.scrap.get("text/plain;charset=utf-8").decode())
+                #                 f.close()
+                #             self.config.__dict__[self.selected] += (pygame.scrap.get("text/plain;charset=utf08").decode())
 
                 if event.key == pygame.K_RETURN:
                     if self.selected is not None:
@@ -79,7 +95,12 @@ class SettingsRenderer:
                         continue
 
                     if type(self.config.__dict__[self.selected]) == str:
-                        self.config.__dict__[self.selected] = self.config.__dict__[self.selected][:-1]
+
+                        if not self.selected == "current_event":
+                            if event.mod & pygame.KMOD_CTRL:
+                                self.config.__dict__[self.selected] = ""
+                            else:
+                                self.config.__dict__[self.selected] = self.config.__dict__[self.selected][:-1]
 
                     if type(self.config.__dict__[self.selected]) == int:
                         self.config.__dict__[self.selected] = 0
@@ -194,4 +215,4 @@ class SettingsRenderer:
                 pass
 
 def open_docs():
-    webbrowser.open("https://github.com/Chromatic-Vision/cubescramble-rewrite/blob/main/HELP.md")
+    webbrowser.open("https://github.com/Chromatic-Vision/cubescramble-rewrite/blob/main/DOCS.md")

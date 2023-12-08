@@ -5,7 +5,6 @@ import requests
 import io
 from math import sin, cos, atan2, pi
 
-from assets.puzzles import puzzle, abstract_puzzle
 import config
 import crf
 import timer
@@ -19,9 +18,21 @@ class Game:
 
     def __init__(self):
 
+        VERSION = "v1.0a"
+
         _ = pygame.display.set_mode((0, 0))  # weird, windows
-        self.screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)  # weird, windows
         del _
+
+        self.screen = pygame.display.set_mode((0, 0), pygame.RESIZABLE)
+        pygame.display.set_caption(f"cubescramble-rewrite {VERSION}")
+
+        try:
+            pygame.display.set_icon(pygame.image.load("assets/images/icon/cubescramble.ico"))
+        except:
+            pass
+
+        pygame.scrap.init()
+        pygame.scrap.set_mode(pygame.SCRAP_CLIPBOARD)
 
         self.font1 = pygame.font.Font("assets/fonts/font1.ttf", 25)
         self.font2 = pygame.font.Font("assets/fonts/font1.ttf", 100)
@@ -149,6 +160,8 @@ class Game:
                         self.timer.refresh_stats()
                         update_mouse(not self.config.hide_mouse)
                         self.state = 'main'
+                elif event.key == pygame.K_c and event.mod & pygame.KMOD_CTRL:
+                    pygame.scrap.put(pygame.SCRAP_TEXT, bytes(self.timer.current_scramble, encoding="utf-8"))
 
         if self.state == 'main':
             self.timer.update(events)

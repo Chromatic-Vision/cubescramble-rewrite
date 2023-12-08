@@ -1,138 +1,140 @@
+from enum import Enum
 import re
 from assets.puzzles.abstract_puzzle_emulator import AbstractPuzzleEmulator
 
-_MOVE_MAPPINGS = [
-    [0, 1, 1,
-     0, 1, 1,
-     0, 0, 0,
 
-     -1, 0, 0,
-     0, 0, 0,
-     0, 0, 0
-     ],  # UR, 0
+class MoveMappings(Enum):
 
-    [0, 0, 0,
-     0, 1, 1,
-     0, 1, 1,
+    UR = [0, 1, 1,
+          0, 1, 1,
+          0, 0, 0,
 
-     0, 0, 0,
-     0, 0, 0,
-     -1, 0, 0
-     ],  # DR, 1
+          -1, 0, 0,
+          0, 0, 0,
+          0, 0, 0
+          ]
 
-    [0, 0, 0,
-     1, 1, 0,
-     1, 1, 0,
+    DR = [0, 0, 0,
+          0, 1, 1,
+          0, 1, 1,
 
-     0, 0, 0,
-     0, 0, 0,
-     0, 0, -1
-     ],  # DL, 2
+          0, 0, 0,
+          0, 0, 0,
+          -1, 0, 0
+          ]
 
-    [1, 1, 0,
-     1, 1, 0,
-     0, 0, 0,
+    DL = [0, 0, 0,
+          1, 1, 0,
+          1, 1, 0,
 
-     0, 0, -1,
-     0, 0, 0,
-     0, 0, 0
-     ],  # UL, 3
+          0, 0, 0,
+          0, 0, 0,
+          0, 0, -1
+          ]
 
-    [1, 1, 1,
-     1, 1, 1,
-     0, 0, 0,
+    UL = [1, 1, 0,
+          1, 1, 0,
+          0, 0, 0,
 
-     -1, 0, -1,
-     0, 0, 0,
-     0, 0, 0
-     ],  # U, 4
+          0, 0, -1,
+          0, 0, 0,
+          0, 0, 0
+          ]
 
-    [0, 1, 1,
-     0, 1, 1,
-     0, 1, 1,
+    U = [1, 1, 1,
+         1, 1, 1,
+         0, 0, 0,
 
-     -1, 0, 0,
-     0, 0, 0,
-     -1, 0, 0
-     ],  # R, 5
+         -1, 0, -1,
+         0, 0, 0,
+         0, 0, 0
+         ]
 
-    [0, 0, 0,
-     1, 1, 1,
-     1, 1, 1,
+    R = [0, 1, 1,
+         0, 1, 1,
+         0, 1, 1,
 
-     0, 0, 0,
-     0, 0, 0,
-     -1, 0, -1
-     ],  # D, 6
+         -1, 0, 0,
+         0, 0, 0,
+         -1, 0, 0
+         ]
 
-    [1, 1, 0,
-     1, 1, 0,
-     1, 1, 0,
+    D = [0, 0, 0,
+         1, 1, 1,
+         1, 1, 1,
 
-     0, 0, -1,
-     0, 0, 0,
-     0, 0, -1
-     ],  # L, 7
+         0, 0, 0,
+         0, 0, 0,
+         -1, 0, -1
+         ]
 
-    [1, 1, 1,
-     1, 1, 1,
-     1, 1, 1,
+    L = [1, 1, 0,
+         1, 1, 0,
+         1, 1, 0,
 
-     -1, 0, -1,
-     0, 0, 0,
-     -1, 0, -1
-     ],  # ALL, 8
+         0, 0, -1,
+         0, 0, 0,
+         0, 0, -1
+         ]
 
-    [0, 1, 1,
-     1, 1, 1,
-     1, 1, 0,
+    ALL = [1, 1, 1,
+           1, 1, 1,
+           1, 1, 1,
 
-     -1, 0, 0,
-     0, 0, 0,
-     0, 0, -1
-     ],  # /, 9
+           -1, 0, -1,
+           0, 0, 0,
+           -1, 0, -1
+           ]
 
-    [1, 1, 0,
-     1, 1, 1,
-     0, 1, 1,
+    BACKSLASH = [0, 1, 1,
+                 1, 1, 1,
+                 1, 1, 0,
 
-     0, 0, -1,
-     0, 0, 0,
-     -1, 0, 0
-     ],  # \, 10
+                 -1, 0, 0,
+                 0, 0, 0,
+                 0, 0, -1
+                 ]
 
-    [1, 1, 0,
-     1, 1, 1,
-     1, 1, 1,
+    SLASH = [1, 1, 0,
+             1, 1, 1,
+             0, 1, 1,
 
-     0, 0, -1,
-     0, 0, 0,
-     -1, 0, -1],  # ur, 11
+             0, 0, -1,
+             0, 0, 0,
+             -1, 0, 0
+             ]
 
-    [1, 1, 1,
-     1, 1, 1,
-     1, 1, 0,
+    ur = [1, 1, 0,
+          1, 1, 1,
+          1, 1, 1,
 
-     -1, 0, -1,
-     0, 0, 0,
-     0, 0, -1],  # dr, 12
+          0, 0, -1,
+          0, 0, 0,
+          -1, 0, -1]
 
-    [1, 1, 1,
-     1, 1, 1,
-     0, 1, 1,
+    dr = [1, 1, 1,
+          1, 1, 1,
+          1, 1, 0,
 
-     -1, 0, -1,
-     0, 0, 0,
-     -1, 0, 0],  # dl, 13
+          -1, 0, -1,
+          0, 0, 0,
+          0, 0, -1]
 
-    [0, 1, 1,
-     1, 1, 1,
-     1, 1, 1,
+    dl = [1, 1, 1,
+          1, 1, 1,
+          0, 1, 1,
 
-     -1, 0, 0,
-     0, 0, 0,
-     -1, 0, -1],  # ul, 14
-]
+          -1, 0, -1,
+          0, 0, 0,
+          -1, 0, 0]
+
+    ul = [0, 1, 1,
+          1, 1, 1,
+          1, 1, 1,
+
+          -1, 0, 0,
+          0, 0, 0,
+          -1, 0, -1]
 
 
 class ClockEmulator(AbstractPuzzleEmulator):
@@ -170,40 +172,29 @@ class ClockEmulator(AbstractPuzzleEmulator):
 
                 pin = items[0]  # pin, e.g. UR
                 amount = int(items[1])  # amount, e.g. 5
-                direction = int(items[2] + "1")  # indicates its direction that clock moves, e.g. +
+                direction = int(items[2] + "1")  # indicates its direction that clock moves, +1 / -1
 
-                if pin == "UR":
-                    self.move_with(amount * direction, side, 0)
-                elif pin == "DR":
-                    self.move_with(amount * direction, side, 1)
-                elif pin == "DL":
-                    self.move_with(amount * direction, side, 2)
-                elif pin == "UL":
-                    self.move_with(amount * direction, side, 3)
-                elif pin == "U":
-                    self.move_with(amount * direction, side, 4)
-                elif pin == "R":
-                    self.move_with(amount * direction, side, 5)
-                elif pin == "D":
-                    self.move_with(amount * direction, side, 6)
-                elif pin == "L":
-                    self.move_with(amount * direction, side, 7)
-                elif pin == "ALL":
-                    self.move_with(amount * direction, side, 8)
+                if pin == "/":
+                    pin = "SLASH"
+                elif pin == "\\":
+                    pin = "BACKSLASH"
+
+                self.move_with(amount * direction, side, MoveMappings[pin].value)
+
             else:  # special cases
+
                 pin = str(block)
 
                 if pin == "y2":
+
                     if side == 0:
                         self.pins = [True, True,
                                      True, True]
-
                         side = 1
 
                     elif side == 1:
                         self.pins = [False, False,
                                      False, False]
-
                         side = 0
 
                 if side == 0:
@@ -226,9 +217,8 @@ class ClockEmulator(AbstractPuzzleEmulator):
                         self.pins[1] = False
 
     def move_with(self, amount, side, method):  # this code sucks ngl
-        move_rule = _MOVE_MAPPINGS[method]
 
-        for i, rule in enumerate(move_rule):
+        for i, rule in enumerate(method):
             if i < 9:
                 if side == 0:
                     if rule == 1:

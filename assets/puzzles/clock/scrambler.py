@@ -17,9 +17,6 @@ class ClockScrambler(AbstractPuzzleScrambler):
             ]
         ]
 
-        # random.shuffle(movements[0])
-        # random.shuffle(movements[1])
-
         scramble = " y2 ".join(
             [" ".join(
                 [

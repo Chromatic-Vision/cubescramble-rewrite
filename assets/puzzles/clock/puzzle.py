@@ -9,3 +9,7 @@ class Clock(AbstractPuzzle):
         self._scrambler = ClockScrambler()
         self._emulator: ClockEmulator = ClockEmulator()
         self._renderer = ClockRenderer(self._emulator)
+
+    @property
+    def scrambler(self):
+        return self._scrambler
