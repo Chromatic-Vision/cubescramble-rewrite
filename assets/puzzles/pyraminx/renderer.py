@@ -68,12 +68,14 @@ class PyraminxRenderer(AbstractPuzzleRenderer):
 
                 piece_color = side.piece_side[i]
 
-                # TODO: fix scuffed outline
-                pygame.draw.polygon(screen, (0, 0, 0),
-                                    [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)], 3)
-
                 pygame.gfxdraw.filled_polygon(screen,
-                                    [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)], to_color_tuple(Color(piece_color)))
+                                              [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in
+                                               range(3)], to_color_tuple(Color(piece_color)))
+
+                pygame.draw.aalines(screen, (0, 0, 0), True,
+                                    ([line for line in [(tri[i][0] * SCALE + x + sx, tri[i][1] * SCALE + y + sy) for i in range(3)]]), 0)
+
+                # render text for debugging
 
                 # tx = 0
                 # ty = 0
@@ -95,19 +97,16 @@ class PyraminxRenderer(AbstractPuzzleRenderer):
 
 
 def _get_line_middle_coords(line: list[list[float]]):
-    # top, right, left
-    # top_to_right_angle = math.atan2(line[0][0] - line[1][0], line[0][1] - line[1][1])
+
     top_to_right_angle = math.atan2(line[1][0] - line[0][0], line[1][1] - line[0][1])
-    # print(top_to_right_angle)
     dist = math.sqrt((line[0][0] - line[1][0]) ** 2 + (line[0][1] - line[1][1]) ** 2)
     new_dist = dist / 2
-    # print(dist, new_dist)
 
     new_coord = [
         line[0][0] + math.sin(top_to_right_angle) * new_dist,
         line[0][1] + math.cos(top_to_right_angle) * new_dist
     ]
-    # print(new_coord)
+
     return new_coord
 
 
@@ -143,7 +142,7 @@ def _get_tri_sub(tri: Tri) -> list[Tri]:
 
 
 def piraminx_triangles(flipped: bool) -> list[Tri]:
-    # tri = [[0, 0], [1, 1], [-1, 1]]
+
     tri = [[0.5, 0], [1, 1], [0, 1]]
     tris = _get_tri_sub(tri)
     out = []
@@ -170,10 +169,8 @@ def piraminx_triangles(flipped: bool) -> list[Tri]:
         for p in tri:
             p[0] *= 1 / highest
             assert p[0] >= 0, p[0]
-            # print(p[1], highest)
             assert p[1] <= highest
             p[1] *= 1 / highest
-            # print(p[1])
 
     if flipped:
         for tri in out:
@@ -189,7 +186,3 @@ if __name__ == '__main__':
     print(_get_line_middle_coords([[0, 0], [1, 1]]))
     print(_get_line_middle_coords([[0, 0], [0, 1]]))
     print(_get_line_middle_coords([[0, 0], [1, 0]]))
-
-    # assert _get_line_middle_coords([[0, 0], [1, 1]]) == [0.5, 0.5]
-    # assert _get_line_middle_coords([[0, 0], [0, 1]]) == [0, 0.5]
-    # assert _get_line_middle_coords([[0, 0], [1, 0]]) == [0.5, 0]
