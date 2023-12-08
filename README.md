@@ -6,7 +6,7 @@ Python based speedcubing (currenty only for clock and pyraminx) trainer software
 Created in python `3.10.4` 
 with pygame `2.1.2` (`SDL 2.0.18`), sounddevice `0.4.6`, numpy `1.22.3` and requests `2.28.1`
 
-Documentation Markdown: [link to the file](https://github.com/Chromatic-Vision/cubescramble-rewrite/blob/main/HELP.md)
+Documentation Markdown: [link to the file](https://github.com/Chromatic-Vision/cubescramble-rewrite/blob/main/DOCS.md)
 
 ## Setup
 Install [pygame](https://pypi.org/project/pygame), [sounddevice](https://pypi.org/project/sounddevice), [numpy](https://pypi.org/project/numpy) and [requests](https://pypi.org/project/requests)
