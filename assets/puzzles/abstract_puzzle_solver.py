@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from abstract_puzzle_emulator import AbstractPuzzleEmulator
+from assets.puzzles.abstract_puzzle_emulator import AbstractPuzzleEmulator
 
 
 # e.g. Clock7SimulSolver

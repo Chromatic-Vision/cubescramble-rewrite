@@ -13,7 +13,7 @@ class ClockScrambler(AbstractPuzzleScrambler):
                 'U', 'R', 'D', 'L', 'ALL'
             ],
             [
-                'U', 'R', 'D', 'L'
+                'U', 'R', 'D', 'L', 'ALL'
             ]
         ]
 

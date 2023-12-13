@@ -56,7 +56,7 @@ class Result:
 class CrfHandler:
 
     def __init__(self):
-        self.working_file = "test.crf"
+        self.working_file = "main.crf"
 
 
     def check_file(self):
