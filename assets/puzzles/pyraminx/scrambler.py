@@ -56,7 +56,4 @@ def random_tips():
 
 
 def prime_random():
-    if bool(random.getrandbits(1)):
-        return "'"
-    else:
-        return ""
+    return "'" if bool(random.getrandbits(1)) else ""
