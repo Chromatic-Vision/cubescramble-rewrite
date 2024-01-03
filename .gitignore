@@ -166,6 +166,10 @@ config.json
 *.png
 *.jpg
 *.jpeg
+*.bmp
 
 # cubescramble-rewrite result file
 *.crf
+
+# discord bot token
+token.txt

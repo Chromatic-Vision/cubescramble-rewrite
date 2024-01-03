@@ -10,7 +10,7 @@ class MegaminxScrambler(AbstractPuzzleScrambler):
 
         scramble = ""
 
-        for o in range(6):
+        for o in range(7):
 
             for i in range(10):
 
@@ -33,3 +33,8 @@ def random_direction():
 
 BASE_MOVES = ["R", "D"]
 # END_MOVES = ["U"]
+
+if __name__ == "__main__":
+    c = MegaminxScrambler()
+    for _ in range(100):
+        print(c.get_random_scramble())

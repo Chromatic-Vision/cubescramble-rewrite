@@ -57,14 +57,17 @@ class HistoryRenderer:
             #         cut_off_lists[i] = cut_off_lists[i][:stat.amount]
 
             cut_off_lists = []
-            for i in range(len(times) - stat.amount):
+
+            # ffs here not doing 1 + causes a desync
+
+            for i in range(1 + (len(times) - stat.amount)):
                 cut_off_lists.append(times[i:i+stat.amount])
 
             # TODO: fix values that are not valid
 
             for i in range(len(cut_off_lists)):
                 res = calcutils.get_average_of(cut_off_lists[i], stat.amount)
-
+                print("res for", i, res)
                 gs.data.append(res)
 
             for _ in range(stat.amount):
@@ -73,6 +76,8 @@ class HistoryRenderer:
             stats.append(gs)
 
 
+        for stat in stats:
+            print(stat.data)
 
         self.draw_graph(self.s,
                         stats,

@@ -15,3 +15,7 @@ class Clock(AbstractPuzzle):
     @property
     def scrambler(self):
         return self._scrambler
+
+    @property
+    def solver(self):
+        return self._solver

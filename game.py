@@ -147,6 +147,7 @@ class Game:
                         update_mouse(True)  # make mouse visible so you can configure settings
                 elif event.key == pygame.K_h and event.mod & pygame.KMOD_CTRL:
                     if self.state == 'main':
+                        # self.timer.refresh_stats()
                         self.history_renderer.re_render()
                         self.state = 'history'
                     else:

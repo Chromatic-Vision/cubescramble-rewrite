@@ -8,7 +8,8 @@ class Sq1Scrambler(AbstractPuzzleScrambler):
     def get_random_scramble(self) -> str: # TODO: make this work
 
         moves = [random_move() for _ in range(random.randint(11, 13))]
-        scramble = "/ ".join(moves)
+        scramble = "[CPM] "
+        scramble += "/ ".join(moves)
 
         return scramble
 

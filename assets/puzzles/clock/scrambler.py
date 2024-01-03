@@ -24,7 +24,7 @@ class ClockScrambler(AbstractPuzzleScrambler):
                     for movement in movements[i]]
             ) for i in range(2)]
         )
-        scramble += _random_pins()
+        # scramble += _random_pins() # removed in 1/1/2024 from WCA
 
         return scramble
 

@@ -9,5 +9,5 @@ class AbstractPuzzleSolver(ABC):
         pass
 
     @abstractmethod
-    def solve(self, puzzle: AbstractPuzzleEmulator) -> None:
+    def solve(self, puzzle: AbstractPuzzleEmulator) -> (int, str): # optimal moves and solution
         pass
