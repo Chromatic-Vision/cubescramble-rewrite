@@ -52,7 +52,7 @@ class BitStream:
 
 class Stackmat:
 
-    def __init__(self, deviceNum):
+    def __init__(self, deviceNum, debug=False):
         print(sd.query_devices()[deviceNum])
         sampleRate = 44100
         self.bitSampleRate = sampleRate / 1200
@@ -72,6 +72,8 @@ class Stackmat:
         self.state = None
         self.last = 0
         self.taken = False
+
+        self.debug = debug
 
         self.stream.start()
 
@@ -135,7 +137,7 @@ class Stackmat:
 
             self.state = state
 
-        if state != None:
+        if state != None and self.debug:
              print(state.state, state.time, state.resting, state.running)
         self.byteBuffer = []
 
@@ -171,8 +173,6 @@ def decodeByteblock(byteBuffer):
 
 
 if __name__ == '__main__':
-    # _ = Stackmat(DEVICE_NUM)
-    # while 1:
-    #    pass
-
-    pass
+    _ = Stackmat(DEVICE_NUM, debug=True)
+    while 1:
+        pass

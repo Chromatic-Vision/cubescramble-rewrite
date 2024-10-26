@@ -49,7 +49,7 @@ class Timer:
 
         elif self.timing_method == 1:
             try:
-                self.stackmat = stackmat.Stackmat(DEVICE_NUM)
+                self.stackmat = stackmat.Stackmat(DEVICE_NUM, debug=False)
             except Exception as e:
                 self.error = f'Error initialising stackmat: {repr(e)}'
 
@@ -109,6 +109,9 @@ class Timer:
                     if self.stackmat.state.state == "S" or (self.stackmat.state.state == "I" and self.stackmat.state.time > 0 and self.stackmat.state.frozen):
                         self.ready = -1
 
+                    elif self.stackmat.state.state == "I" and self.stackmat.state.time == 0:
+                        self.ready = 0
+
                     elif self.stackmat.state.state == "C":
 
                         if self.stackmat.state.time <= 0:
@@ -124,6 +127,14 @@ class Timer:
                         if self.stackmat.state.time > 0:
                             self.ready = 3
                             self.on_start()
+
+                    elif self.stackmat.state.state == "L" or self.stackmat.state.state == "R" or self.stackmat.state.state == "I":
+                        pass
+
+                    else:
+
+                        print(f"Unknown header {self.stackmat.state.state}, ignoring.")
+
                 else:
 
                     if self.stackmat.state.frozen or self.stackmat.state.state == "S":  # otherwise without frozen statement, it won't detect if timer is stopped because the timer doesn't override S (if left sensor is being pressed, it sends L even if the timer has stopped)
