@@ -13,10 +13,10 @@ def get_average_of(times_: list[crf.Result], length) -> int:
     elif times_.__len__() < 3:
         return -1
 
-    print("_:", times_)
+    # print("_:", times_)
     times = times_[:]
     times = times[-length:]
-    print("times", times)
+    # print("times", times)
 
     dnf_count = 0
 
