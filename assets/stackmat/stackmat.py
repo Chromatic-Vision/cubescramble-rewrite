@@ -3,7 +3,7 @@ from math import sqrt
 
 # https://github.com/coder13/stackmat-python
 
-DEVICE_NUM = 8
+DEVICE_NUM = 5
 
 THRESHOLD_EDGE = 0.7
 AGC_FACTOR = 0.0001
@@ -135,8 +135,8 @@ class Stackmat:
 
             self.state = state
 
-        # if state != None:
-        #     print(state.state, state.time, state.resting, state.running)
+        if state != None:
+             print(state.state, state.time, state.resting, state.running)
         self.byteBuffer = []
 
 class StackmatState:
@@ -171,4 +171,8 @@ def decodeByteblock(byteBuffer):
 
 
 if __name__ == '__main__':
-    Stackmat(DEVICE_NUM)
+    # _ = Stackmat(DEVICE_NUM)
+    # while 1:
+    #    pass
+
+    pass
